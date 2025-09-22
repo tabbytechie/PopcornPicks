@@ -33,6 +33,12 @@ export interface TMDBMovieDetails extends TMDBMovie {
   imdb_id: string | null;
   budget: number;
   revenue: number;
+  belongs_to_collection: {
+    id: number;
+    name: string;
+    poster_path: string | null;
+    backdrop_path: string | null;
+  } | null;
 }
 
 export interface TMDBGenre {
@@ -216,6 +222,54 @@ export async function fetchMovieVideos(movieId: number): Promise<TMDBVideos | nu
   } catch (error) {
     console.error(`Error fetching movie videos for ID ${movieId}:`, error);
     return null;
+  }
+}
+
+// Fetch similar movies
+export async function fetchSimilarMovies(movieId: number): Promise<TMDBMovie[]> {
+  try {
+    checkApiKey();
+    const response = await fetch(`${TMDB_BASE_URL}/movie/${movieId}/similar?api_key=${TMDB_API_KEY}`, {
+      method: 'GET',
+      credentials: 'omit',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error(`Error fetching similar movies for ID ${movieId}:`, error);
+    return [];
+  }
+}
+
+// Fetch movie recommendations
+export async function fetchMovieRecommendations(movieId: number): Promise<TMDBMovie[]> {
+  try {
+    checkApiKey();
+    const response = await fetch(`${TMDB_BASE_URL}/movie/${movieId}/recommendations?api_key=${TMDB_API_KEY}`, {
+      method: 'GET',
+      credentials: 'omit',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error(`Error fetching movie recommendations for ID ${movieId}:`, error);
+    return [];
   }
 }
 

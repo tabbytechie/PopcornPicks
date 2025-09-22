@@ -1,10 +1,12 @@
 
-import { Star, Play, Plus } from "lucide-react";
+import { Star, Play, Plus, Check } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { getImageUrl } from "@/lib/tmdb";
+import { useWatchlist } from "@/contexts/WatchlistContext";
+import { useToast } from "@/components/ui/use-toast";
 
 // Updated interface to match TMDB API structure
 export interface Movie {
@@ -23,10 +25,33 @@ interface MovieCardProps {
 }
 
 const MovieCard = ({ movie, showAddToWatchlist = true }: MovieCardProps) => {
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  const { toast } = useToast();
+  
   // Safety check to ensure movie is defined
   if (!movie) {
     return null;
   }
+  
+  const inWatchlist = isInWatchlist(movie.id);
+  
+  const handleWatchlistClick = () => {
+    if (inWatchlist) {
+      removeFromWatchlist(movie.id);
+      toast({
+        title: "Removed from watchlist",
+        description: `${movie.title} has been removed from your watchlist`,
+        variant: "default",
+      });
+    } else {
+      addToWatchlist(movie);
+      toast({
+        title: "Added to watchlist",
+        description: `${movie.title} has been added to your watchlist`,
+        variant: "default",
+      });
+    }
+  };
   return (
     <Card className="group overflow-hidden bg-slate-800/50 border-slate-700 hover:border-purple-500/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
       <div className="relative aspect-[2/3] overflow-hidden">
@@ -51,8 +76,13 @@ const MovieCard = ({ movie, showAddToWatchlist = true }: MovieCardProps) => {
               </Button>
             </Link>
             {showAddToWatchlist && (
-              <Button size="sm" variant="outline" className="bg-white/20 backdrop-blur-md hover:bg-white/30 text-white border-white/20 transition-all duration-300 hover:scale-110">
-                <Plus className="h-3 w-3" />
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleWatchlistClick}
+                className={`backdrop-blur-md transition-all duration-300 hover:scale-110 ${inWatchlist ? 'bg-green-600/80 hover:bg-green-700/80 text-white border-green-600/80' : 'bg-white/20 hover:bg-white/30 text-white border-white/20'}`}
+              >
+                {inWatchlist ? <Check className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
               </Button>
             )}
           </div>

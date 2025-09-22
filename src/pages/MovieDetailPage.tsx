@@ -1,7 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Star, Plus, Play, Bookmark, Clock, Calendar, DollarSign } from "lucide-react";
+import { ArrowLeft, Star, Plus, Play, Check, Clock, Calendar, DollarSign, Globe, Film, Users, ChevronRight } from "lucide-react";
+import { useWatchlist } from "@/contexts/WatchlistContext";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,24 +13,31 @@ import {
   fetchMovieDetails, 
   fetchMovieCredits, 
   fetchMovieVideos, 
+  fetchSimilarMovies,
+  fetchMovieRecommendations,
   getImageUrl, 
   formatRuntime, 
   formatCurrency,
   TMDBMovieDetails,
   TMDBCredits,
-  TMDBVideos 
+  TMDBVideos,
+  TMDBMovie
 } from "@/lib/tmdb";
+import MovieCard from "@/components/MovieCard";
 
 const MovieDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [movie, setMovie] = useState<TMDBMovieDetails | null>(null);
   const [credits, setCredits] = useState<TMDBCredits | null>(null);
   const [videos, setVideos] = useState<TMDBVideos | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [similarMovies, setSimilarMovies] = useState<TMDBMovie[]>([]);
+  const [recommendations, setRecommendations] = useState<TMDBMovie[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
-  const [userRating, setUserRating] = useState(0);
-  const [showTrailer, setShowTrailer] = useState(false);
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } = useWatchlist();
+  const { toast } = useToast();
+  const [userRating, setUserRating] = useState<number>(0);
+  const [showTrailer, setShowTrailer] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,11 +52,13 @@ const MovieDetailPage = () => {
           throw new Error('Invalid movie ID');
         }
         
-        // Fetch movie details, credits, and videos concurrently
-        const [movieData, creditsData, videosData] = await Promise.all([
+        // Fetch movie details, credits, videos, similar movies, and recommendations concurrently
+        const [movieData, creditsData, videosData, similarMoviesData, recommendationsData] = await Promise.all([
           fetchMovieDetails(movieId),
           fetchMovieCredits(movieId),
-          fetchMovieVideos(movieId)
+          fetchMovieVideos(movieId),
+          fetchSimilarMovies(movieId),
+          fetchMovieRecommendations(movieId)
         ]);
         
         if (!movieData) {
@@ -57,6 +68,8 @@ const MovieDetailPage = () => {
         setMovie(movieData);
         setCredits(creditsData);
         setVideos(videosData);
+         setSimilarMovies(similarMoviesData);
+         setRecommendations(recommendationsData);
       } catch (err) {
         console.error('Error fetching movie data:', err);
         setError(err instanceof Error ? err.message : 'Failed to load movie data');
@@ -85,7 +98,32 @@ const MovieDetailPage = () => {
   };
 
   const toggleWatchlist = () => {
-    setIsInWatchlist(!isInWatchlist);
+    if (!movie) return;
+    
+    const movieForWatchlist = {
+      id: movie.id,
+      title: movie.title,
+      poster_path: movie.poster_path,
+      vote_average: movie.vote_average,
+      release_date: movie.release_date,
+      genre_ids: movie.genres.map(genre => genre.id)
+    };
+    
+    if (isInWatchlist(movie.id)) {
+      removeFromWatchlist(movie.id);
+      toast({
+        title: "Removed from watchlist",
+        description: `${movie.title} has been removed from your watchlist`,
+        variant: "default",
+      });
+    } else {
+      addToWatchlist(movieForWatchlist);
+      toast({
+        title: "Added to watchlist",
+        description: `${movie.title} has been added to your watchlist`,
+        variant: "default",
+      });
+    }
   };
 
   const handleRating = (rating: number) => {
@@ -221,13 +259,13 @@ const MovieDetailPage = () => {
                     variant="outline"
                     onClick={toggleWatchlist}
                     className={`border-white/20 ${
-                      isInWatchlist
+                      movie && isInWatchlist(movie.id)
                         ? "bg-green-600 text-white border-green-600"
                         : "text-white hover:bg-white/10"
                     }`}
                   >
-                    <Plus className="h-5 w-5 mr-2" />
-                    {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
+                    {movie && isInWatchlist(movie.id) ? <Check className="h-5 w-5 mr-2" /> : <Plus className="h-5 w-5 mr-2" />}
+                    {movie && isInWatchlist(movie.id) ? "In Watchlist" : "Add to Watchlist"}
                   </Button>
                 </div>
               </div>
@@ -277,6 +315,40 @@ const MovieDetailPage = () => {
                 </CardContent>
               </Card>
               
+              {/* Production Companies */}
+              {movie?.production_companies && movie.production_companies.length > 0 && (
+                <Card className="bg-slate-800/50 border-slate-700 mt-6">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold text-white mb-4">Production Companies</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                      {movie.production_companies.map((company) => (
+                        <div key={company.id} className="text-center">
+                          {company.logo_path ? (
+                            <div className="h-16 flex items-center justify-center mb-2 bg-white/10 rounded-lg p-2">
+                              <img
+                                src={getImageUrl(company.logo_path, 'w185')}
+                                alt={company.name}
+                                className="max-h-12 max-w-full object-contain"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  target.nextElementSibling?.classList.remove('hidden');
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-16 flex items-center justify-center mb-2 bg-white/10 rounded-lg p-2">
+                              <Film className="h-8 w-8 text-gray-400" />
+                            </div>
+                          )}
+                          <p className="text-sm text-white font-medium">{company.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+              
               {/* Additional Movie Info */}
               <Card className="bg-slate-800/50 border-slate-700 mt-6">
                 <CardContent className="p-6">
@@ -300,6 +372,34 @@ const MovieDetailPage = () => {
                       <div>
                         <p className="text-gray-400 text-sm">Revenue</p>
                         <p className="text-white">{formatCurrency(movie.revenue)}</p>
+                      </div>
+                    )}
+                    {movie?.homepage && (
+                      <div>
+                        <p className="text-gray-400 text-sm">Website</p>
+                        <a 
+                          href={movie.homepage} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-purple-400 hover:text-purple-300 flex items-center gap-1"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Visit Website
+                        </a>
+                      </div>
+                    )}
+                    {movie?.imdb_id && (
+                      <div>
+                        <p className="text-gray-400 text-sm">IMDB</p>
+                        <a 
+                          href={`https://www.imdb.com/title/${movie.imdb_id}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-purple-400 hover:text-purple-300 flex items-center gap-1"
+                        >
+                          <Film className="h-4 w-4" />
+                          View on IMDB
+                        </a>
                       </div>
                     )}
                   </div>
@@ -336,8 +436,69 @@ const MovieDetailPage = () => {
                   )}
                 </CardContent>
               </Card>
+              
+              {/* Collection */}
+              {movie?.belongs_to_collection && (
+                <Card className="bg-slate-800/50 border-slate-700 mt-6">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-semibold text-white mb-4">Part of a Collection</h3>
+                    <div className="relative rounded-lg overflow-hidden">
+                      {movie.belongs_to_collection.backdrop_path ? (
+                        <img
+                          src={getImageUrl(movie.belongs_to_collection.backdrop_path, 'w500')}
+                          alt={movie.belongs_to_collection.name}
+                          className="w-full h-32 object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-32 bg-gradient-to-r from-purple-800 to-pink-700 flex items-center justify-center">
+                          <Film className="h-10 w-10 text-white/70" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
+                        <h4 className="text-white font-semibold">{movie.belongs_to_collection.name}</h4>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
+          
+          {/* Similar Movies */}
+          {similarMovies && similarMovies.length > 0 && (
+            <div className="mt-16">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Similar Movies</h2>
+                <Link to="/" className="text-purple-400 hover:text-purple-300 flex items-center gap-1">
+                  <ChevronRight className="h-4 w-4" />
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {similarMovies.slice(0, 5).map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} showAddToWatchlist={true} />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Recommendations */}
+          {recommendations && recommendations.length > 0 && (
+            <div className="mt-16">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Recommendations</h2>
+                <Link to="/" className="text-purple-400 hover:text-purple-300 flex items-center gap-1">
+                  <ChevronRight className="h-4 w-4" />
+                  View More
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {recommendations.slice(0, 5).map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} showAddToWatchlist={true} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
