@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchMovieDetails } from "@/lib/tmdb";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 import { Bookmark, Star, X, Play, Calendar, Clock, Filter, SortAsc, Grid, List, Search, Heart, Share, Eye, TrendingUp, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +30,7 @@ interface WatchlistMovie {
 
 const WatchlistPage = () => {
   const [movies, setMovies] = useState<WatchlistMovie[]>([]);
-  const [watchlistMovieIds, setWatchlistMovieIds] = useState([550, 13, 155, 122, 424, 680]); // Popular movies
+  const { watchlist, removeFromWatchlist } = useWatchlist();
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("dateAdded");
   const [filterBy, setFilterBy] = useState("all");
@@ -41,25 +42,34 @@ const WatchlistPage = () => {
     const fetchWatchlistMovies = async () => {
       try {
         setLoading(true);
+        
+        if (watchlist.length === 0) {
+          setMovies([]);
+          setLoading(false);
+          return;
+        }
+        
         const fetchedMovies = await Promise.all(
-          watchlistMovieIds.map(async (id, index) => {
-            const movie = await fetchMovieDetails(id);
-            return movie ? {
-              id: movie.id,
-              title: movie.title,
-              poster: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
-              backdrop: movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : undefined,
-              rating: movie.vote_average ? parseFloat(movie.vote_average.toFixed(1)) : 0,
-              year: movie.release_date ? new Date(movie.release_date).getFullYear() : 0,
-              genre: movie.genres && movie.genres.length > 0 ? movie.genres[0].name : "N/A",
-              userRating: Math.floor(Math.random() * 5) + 1,
-              dateAdded: new Date(Date.now() - (index * 7 * 24 * 60 * 60 * 1000)).toISOString(),
-              watched: Math.random() > 0.6,
-              runtime: movie.runtime || 0,
-              overview: movie.overview || ""
-            } : null;
+          watchlist.map(async (watchlistMovie, index) => {
+            // For movies that need additional details
+            const movie = await fetchMovieDetails(watchlistMovie.id);
+            return {
+              id: watchlistMovie.id,
+              title: watchlistMovie.title,
+              poster: watchlistMovie.poster_path ? `https://image.tmdb.org/t/p/w500${watchlistMovie.poster_path}` : 'https://via.placeholder.com/500x750/1f2937/9ca3af?text=No+Image',
+              backdrop: movie?.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : undefined,
+              rating: watchlistMovie.vote_average ? parseFloat(watchlistMovie.vote_average.toFixed(1)) : 0,
+              year: watchlistMovie.release_date ? new Date(watchlistMovie.release_date).getFullYear() : 0,
+              genre: movie?.genres && movie.genres.length > 0 ? movie.genres[0].name : "N/A",
+              userRating: 0, // Default user rating
+              dateAdded: new Date().toISOString(), // Current date as default
+              watched: false, // Default to unwatched
+              runtime: movie?.runtime || 0,
+              overview: movie?.overview || ""
+            };
           })
         );
+        
         setMovies(fetchedMovies.filter(Boolean) as WatchlistMovie[]);
       } catch (error) {
         console.error('Error fetching watchlist movies:', error);
@@ -67,11 +77,12 @@ const WatchlistPage = () => {
         setLoading(false);
       }
     };
+    
     fetchWatchlistMovies();
-  }, [watchlistMovieIds]);
+  }, [watchlist]);
 
-  const removeFromWatchlist = (movieId: number) => {
-    setMovies(movies.filter(movie => movie.id !== movieId));
+  const handleRemoveFromWatchlist = (movieId: number) => {
+    removeFromWatchlist(movieId);
   };
 
   const updateRating = (movieId: number, rating: number) => {
@@ -432,7 +443,7 @@ const WatchlistPage = () => {
                   
                   {/* Remove Button */}
                   <button
-                    onClick={() => removeFromWatchlist(movie.id)}
+                    onClick={() => handleRemoveFromWatchlist(movie.id)}
                     className="absolute top-2 right-2 p-2 rounded-full bg-red-600/80 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-red-700 z-10"
                   >
                     <X className="h-4 w-4" />
@@ -580,7 +591,7 @@ const WatchlistPage = () => {
                         </div>
                         
                         <button
-                          onClick={() => removeFromWatchlist(movie.id)}
+                          onClick={() => handleRemoveFromWatchlist(movie.id)}
                           className="p-2 rounded-full bg-red-600/20 text-red-400 hover:bg-red-600/40 transition-colors"
                         >
                           <X className="h-4 w-4" />

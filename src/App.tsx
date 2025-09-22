@@ -22,6 +22,7 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import CookiePolicyPage from "./pages/CookiePolicyPage";
 import NotFound from "./pages/NotFound";
+import { WatchlistProvider } from "./contexts/WatchlistContext";
 
 const queryClient = new QueryClient();
 
@@ -98,7 +99,8 @@ const NavigationLoader = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+    <WatchlistProvider>
+      <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
@@ -124,6 +126,7 @@ const App = () => (
         </NavigationLoader>
       </BrowserRouter>
     </TooltipProvider>
+    </WatchlistProvider>
   </QueryClientProvider>
 );
 
