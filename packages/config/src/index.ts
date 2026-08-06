@@ -1,0 +1,2 @@
+// @popcornpicks/config - placeholder
+export {};

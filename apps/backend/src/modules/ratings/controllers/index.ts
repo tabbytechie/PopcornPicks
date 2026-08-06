@@ -1,0 +1,1 @@
+// ratings controllers (placeholder)

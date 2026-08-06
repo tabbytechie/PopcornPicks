@@ -1,0 +1,1 @@
+// ratings dto (placeholder)
