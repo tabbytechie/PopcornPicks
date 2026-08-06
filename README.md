@@ -1,73 +1,68 @@
-# Welcome to your Lovable project
+# PopcornPicks
 
-## Project info
+A movie recommendation platform, structured as an enterprise-grade **Modular Monolith**:
+one repository, one frontend, one backend, one PostgreSQL database - organised into
+many independent modules that can each be extracted into a microservice later
+**without rewriting the project**.
 
-**URL**: https://lovable.dev/projects/d45eb035-fe42-4bee-bd06-cdc8b4acde5b
+## Architecture at a glance
 
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/d45eb035-fe42-4bee-bd06-cdc8b4acde5b) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+.
+|-- apps/
+|   |-- frontend/   React + TypeScript SPA (feature-based)    <- active
+|   |-- backend/    Modular Monolith API (placeholder)        <- hides all external APIs
+|   `-- admin/      Admin console (placeholder)
+|-- packages/       shared ui / config / constants / utils / hooks / types / shared
+|-- database/       PostgreSQL-first: schema, migrations, seeds,
+|                   functions, triggers, views, materialized views, policies,
+|                   extensions (pgvector, postgis, pg_trgm, pg_cron, pgmq, uuid)
+|-- docker/         containerization (prepared, not implemented)
+|-- docs/           architecture, api, database, deployment, decisions (ADRs), contributing
+|-- scripts/        repo automation (placeholder)
+`-- tools/          developer tooling (placeholder)
 ```
 
-**Edit a file directly in GitHub**
+### Design decisions (see `docs/decisions/`)
+- **Modular Monolith over microservices** (ADR-0001)
+- **PostgreSQL-first** single data store - no Redis / MongoDB / Elasticsearch / Kafka (ADR-0002)
+- **All external APIs (TMDB, AI) are hidden behind the backend** (ADR-0003)
+- **Feature-based frontend modules** with `@/` path aliases (ADR-0004)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Prerequisites
 
-**Use GitHub Codespaces**
+- Node.js >= 18 & npm ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
+- A TMDB API key (see `docs/tmdb-setup.md`)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Getting started
 
-## What technologies are used for this project?
+```sh
+# 1. Install dependencies (installs all apps/* and packages/* workspaces)
+npm install
 
-This project is built with:
+# 2. Start the frontend dev server (http://localhost:8080)
+npm run dev
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# 3. Build the frontend
+npm run build
 
-## How can I deploy this project?
+# 4. Lint
+npm run lint
+```
 
-Simply open [Lovable](https://lovable.dev/projects/d45eb035-fe42-4bee-bd06-cdc8b4acde5b) and click on Share -> Publish.
+> The frontend currently calls TMDB directly. Later the backend will hide every
+> external API - the architecture is already prepared for that (no backend logic
+> is implemented yet).
 
-## Can I connect a custom domain to my Lovable project?
+## Tech stack (frontend)
 
-Yes, you can!
+Vite - React - TypeScript - react-router - TanStack Query - Tailwind CSS - shadcn/ui
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Documentation
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- [Architecture](docs/architecture/README.md)
+- [Database](docs/database/README.md)
+- [API](docs/api/README.md)
+- [Deployment](docs/deployment/README.md)
+- [Architecture Decision Records](docs/decisions/README.md)
+- [Contributing / conventions](docs/contributing/README.md)
