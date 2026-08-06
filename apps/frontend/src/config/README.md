@@ -1,0 +1,2 @@
+# config
+App configuration (placeholder).

@@ -1,0 +1,13 @@
+{
+  "name": "@popcornpicks/backend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Modular Monolith backend (placeholder) - one process, many modules, PostgreSQL-first.",
+  "scripts": {
+    "dev": "echo 'backend dev (placeholder) - to be implemented'",
+    "build": "echo 'backend build (placeholder) - to be implemented'",
+    "lint": "echo 'backend lint (placeholder) - to be implemented'",
+    "typecheck": "echo 'backend typecheck (placeholder) - to be implemented'"
+  }
+}

@@ -1,2 +1,12 @@
-# Environment variables
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Environment
 .env
+
+# OS / editor
+.DS_Store
+*.log

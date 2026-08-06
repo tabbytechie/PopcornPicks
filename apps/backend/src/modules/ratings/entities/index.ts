@@ -1,0 +1,1 @@
+// ratings entities (placeholder)

@@ -1,0 +1,2 @@
+// admin app placeholder
+export {};

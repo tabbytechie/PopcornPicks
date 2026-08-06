@@ -1,0 +1,2 @@
+// @popcornpicks/types - placeholder
+export {};
