@@ -58,7 +58,7 @@ const MovieCard = ({ movie, showAddToWatchlist = true }: MovieCardProps) => {
   };
 
   return (
-    <Card className="group overflow-hidden border border-white/10 bg-card transition-colors hover:border-white/20">
+    <Card className="group overflow-hidden border border-white/10 bg-card transition-all duration-300 hover:border-white/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/40">
       <div className="relative aspect-[2/3] overflow-hidden">
         <img
           src={movie.poster_path ? getImageUrl(movie.poster_path, "w500") : PLACEHOLDER_POSTER}

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
   Award,
@@ -26,6 +27,9 @@ import {
 } from "@/shared/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import MovieCard from "@/features/movies/components/MovieCard";
+import { Reveal } from "@/shared/components/Reveal";
+import { PaginationControls } from "@/shared/components/PaginationControls";
+import { usePagination } from "@/shared/hooks/usePagination";
 import { useBrowseMovies } from "@/features/browse/hooks/useBrowseMovies";
 import { getImageUrl } from "@/utils/format";
 
@@ -54,6 +58,25 @@ const BrowsePage = () => {
     genres,
     filteredMovies,
   } = useBrowseMovies();
+
+  // Stable identity for the clean list so pagination resets only on real
+  // filter changes, not on every render.
+  const visibleMovies = useMemo(
+    () => filteredMovies.filter((m) => m && m.id),
+    [filteredMovies],
+  );
+
+  // Client-side pagination over the filtered result set; smaller page for
+  // the bulkier list view.
+  const {
+    page,
+    setPage,
+    totalPages,
+    paginatedItems,
+    rangeStart,
+    rangeEnd,
+    totalItems,
+  } = usePagination(visibleMovies, viewMode === "grid" ? 12 : 8);
 
   if (error) {
     return (
@@ -176,17 +199,15 @@ const BrowsePage = () => {
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {filteredMovies
-            .filter((m) => m && m.id)
-            .map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
-            ))}
+          {paginatedItems.map((movie, i) => (
+            <Reveal key={movie.id} delay={(i % 4) * 70}>
+              <MovieCard movie={movie} />
+            </Reveal>
+          ))}
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredMovies
-            .filter((m) => m && m.id)
-            .map((movie) => (
+          {paginatedItems.map((movie) => (
               <Card
                 key={movie.id}
                 className="flex overflow-hidden border border-white/10 bg-card p-0 hover:border-white/20 transition-colors"
@@ -237,6 +258,15 @@ const BrowsePage = () => {
             ))}
         </div>
       )}
+
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        totalItems={totalItems}
+      />
     </div>
   );
 };

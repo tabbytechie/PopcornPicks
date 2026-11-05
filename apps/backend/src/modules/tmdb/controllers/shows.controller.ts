@@ -26,6 +26,21 @@ showsRouter.get(
   }),
 );
 
+// Static routes - registered before /:id so they match first.
+showsRouter.get(
+  '/airing-today',
+  asyncRoute(async (req, res) => {
+    res.json(await tmdbService.getAiringTodayShows(parsePage(req.query.page)));
+  }),
+);
+
+showsRouter.get(
+  '/on-the-air',
+  asyncRoute(async (req, res) => {
+    res.json(await tmdbService.getOnTheAirShows(parsePage(req.query.page)));
+  }),
+);
+
 showsRouter.get(
   '/search',
   asyncRoute(async (req, res) => {

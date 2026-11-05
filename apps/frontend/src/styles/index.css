@@ -6,9 +6,49 @@
  * PopcornPicks design tokens — dark-first Netflix palette.
  * HSL values so existing shadcn components (bg-background, text-foreground, etc.)
  * pick up the theme without any per-component edits.
+ *
+ * The `dark` class (managed by next-themes on <html>) carries the original
+ * Netflix-dark palette; `:root` is the light counterpart. Default theme is dark,
+ * so the app looks exactly as before unless the user toggles.
  */
 @layer base {
   :root {
+    color-scheme: light;
+
+    --background: 0 0% 98%;
+    --foreground: 0 0% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+
+    --primary: 354 89% 47%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 90%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 354 89% 47%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 82%;
+    --input: 0 0% 82%;
+    --ring: 354 89% 47%;
+
+    --radius: 0.375rem;
+  }
+
+  .dark {
+    color-scheme: dark;
+
     --background: 0 0% 8%;
     --foreground: 0 0% 100%;
 
@@ -36,8 +76,6 @@
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 354 89% 47%;
-
-    --radius: 0.375rem;
   }
 
   * {
@@ -47,5 +85,113 @@
   html,
   body {
     @apply bg-background text-foreground antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
+
+  /* Keep the whole screen responsive: nothing may cause sideways scroll. */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Respect the user's motion preference — kill all site animations. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Site-wide entrance + reveal animations.
+ * `.reveal` elements start hidden and slide/fade in when scrolled into view
+ * (see shared/components/Reveal.tsx). `.animate-*` utilities run once on
+ * mount — used for page transitions and section headers.
+ */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-fade-up   { animation: site-fade-up 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+  .animate-fade-in   { animation: site-fade-in 0.45s ease-out both; }
+  .animate-scale-in  { animation: site-scale-in 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+}
+
+@keyframes site-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes site-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes site-scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/*
+ * Hero carousel entrance animations — one is picked at random per slide
+ * change (see HeroCarousel.tsx). Applied only to the entering slide, so the
+ * animation runs fresh every time a slide becomes active.
+ */
+@layer utilities {
+  .hero-anim-fade        { animation: hero-fade 1s ease-in-out; }
+  .hero-anim-slide-left  { animation: hero-slide-left 1.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .hero-anim-slide-right { animation: hero-slide-right 1.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .hero-anim-zoom-in     { animation: hero-zoom-in 1.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .hero-anim-zoom-out    { animation: hero-zoom-out 1.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .hero-anim-blur-in     { animation: hero-blur-in 1.4s ease-out; }
+  .hero-anim-drift       { animation: hero-drift 1.5s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .hero-anim-tilt        { animation: hero-tilt 1.4s cubic-bezier(0.22, 0.61, 0.36, 1); }
+}
+
+@keyframes hero-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes hero-slide-left {
+  from { opacity: 0; transform: translateX(7%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes hero-slide-right {
+  from { opacity: 0; transform: translateX(-7%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes hero-zoom-in {
+  from { opacity: 0; transform: scale(1.1); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes hero-zoom-out {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes hero-blur-in {
+  from { opacity: 0; filter: blur(16px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+@keyframes hero-drift {
+  from { opacity: 0; transform: translate(-4%, 3%) scale(1.05); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+@keyframes hero-tilt {
+  from { opacity: 0; transform: perspective(1200px) rotateY(9deg) scale(0.96); }
+  to   { opacity: 1; transform: perspective(1200px) rotateY(0deg) scale(1); }
 }

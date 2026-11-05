@@ -39,7 +39,23 @@ many independent modules that can each be extracted into a microservice later
 
 ## Getting started
 
-### Development with Docker
+### Development with the root compose file (postgres + backend + web)
+
+```sh
+# Builds the dev images and starts all three services
+docker compose up -d --build
+
+# Web (Vite dev server):  http://localhost:4309
+# Backend (Express API):  http://localhost:2789   (health: /health)
+# Postgres:               localhost:5433          (container 5432)
+```
+
+`TMDB_API_KEY` / `JWT_SECRET` are read from `apps/backend/.env` at runtime (that file
+is never copied into an image). Host ports can be overridden with `WEB_PORT` and
+`BACKEND_PORT`. Source under `apps/*/src` and `packages/` is bind-mounted, so edits
+hot-reload; rebuild with `docker compose up -d --build` after changing a `package.json`.
+
+### Development with the full Docker platform
 
 ```sh
 # 1. Copy environment file

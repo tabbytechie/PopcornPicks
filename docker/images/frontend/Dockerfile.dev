@@ -1,0 +1,27 @@
+# Development image for the PopcornPicks web frontend (Vite dev server).
+#
+# Build context MUST be the repository root (npm workspaces live there), which is
+# what docker-compose.yml declares:
+#   build: { context: ., dockerfile: docker/images/frontend/Dockerfile.dev }
+#
+# apps/frontend/{src,index.html,vite.config.ts,...} and packages/ are bind-mounted
+# at runtime for HMR; node_modules stay container-native.
+
+FROM node:20-alpine
+
+WORKDIR /repo
+ENV NODE_ENV=development
+
+RUN apk add --no-cache libc6-compat
+
+# Whole monorepo (root .dockerignore keeps host node_modules / .env out).
+COPY . .
+
+RUN npm ci --no-audit --no-fund
+
+# Vite dev server port (vite.config.ts pins it to 8080).
+EXPOSE 8080
+
+# --host 0.0.0.0 overrides the config's "::" so Docker's IPv4 port forward works,
+# --strictPort keeps Vite from silently hopping to another port.
+CMD ["npm", "run", "dev", "--workspace", "@popcornpicks/frontend", "--", "--host", "0.0.0.0", "--port", "8080", "--strictPort"]

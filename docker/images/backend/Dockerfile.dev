@@ -1,0 +1,26 @@
+# Development image for the PopcornPicks backend.
+#
+# Build context MUST be the repository root (npm workspaces live there), which is
+# what docker-compose.yml declares:
+#   build: { context: ., dockerfile: docker/images/backend/Dockerfile.dev }
+#
+# Source dirs (apps/backend/src, packages) are bind-mounted at runtime for
+# `tsx watch` hot-reload, while node_modules stay container-native.
+
+FROM node:20-alpine
+
+WORKDIR /repo
+ENV NODE_ENV=development
+
+RUN apk add --no-cache libc6-compat
+
+# Whole monorepo (root .dockerignore keeps host node_modules / .env out).
+COPY . .
+
+# Installs every workspace, so `@popcornpicks/types` and friends resolve.
+RUN npm ci --no-audit --no-fund
+
+# Backend dev server port inside the container (override with PORT).
+EXPOSE 4000
+
+CMD ["npm", "run", "dev", "--workspace", "@popcornpicks/backend"]
