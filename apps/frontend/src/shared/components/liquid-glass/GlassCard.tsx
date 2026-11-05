@@ -27,7 +27,7 @@ export const GlassCard = ({
   style,
   padding = "16px 20px",
   cornerRadius = 20,
-  blurAmount = 8,
+  blurAmount = 4,
   displacementScale = 40,
   shadowMode = false,
   mouseContainer,

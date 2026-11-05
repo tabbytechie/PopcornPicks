@@ -28,6 +28,8 @@ import {
 } from "@/shared/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs";
 import { useWatchlistPage } from "@/features/watchlist/hooks/useWatchlistPage";
+import { PaginationControls } from "@/shared/components/PaginationControls";
+import { usePagination } from "@/shared/hooks/usePagination";
 
 const WatchlistPage = () => {
   const {
@@ -53,6 +55,18 @@ const WatchlistPage = () => {
     toggleWatched,
   } = useWatchlistPage();
 
+  // Paginate the filtered/sorted list; resets to page 1 whenever the
+  // search, filters, or tabs change. Smaller page for the bulkier list view.
+  const {
+    page,
+    setPage,
+    totalPages,
+    paginatedItems,
+    rangeStart,
+    rangeEnd,
+    totalItems,
+  } = usePagination(filteredAndSortedMovies, viewMode === "grid" ? 12 : 8);
+
   if (loading) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -69,7 +83,7 @@ const WatchlistPage = () => {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
-      <header className="mb-8">
+      <header className="mb-8 animate-fade-up">
         <h1 className="text-3xl font-bold text-foreground sm:text-4xl">My Watchlist</h1>
         <p className="mt-2 text-muted-foreground">
           Your curated collection — track what to watch next.
@@ -199,10 +213,10 @@ const WatchlistPage = () => {
         />
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredAndSortedMovies.map((movie) => (
+          {paginatedItems.map((movie) => (
             <Card
               key={movie.id}
-              className="group overflow-hidden border border-white/10 bg-card transition-colors hover:border-white/20"
+              className="group overflow-hidden border border-white/10 bg-card transition-all duration-300 hover:border-white/20 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/40"
             >
               <div className="relative aspect-[2/3] overflow-hidden">
                 <img src={movie.poster} alt={movie.title} className="h-full w-full object-cover" />
@@ -276,7 +290,7 @@ const WatchlistPage = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredAndSortedMovies.map((movie) => (
+          {paginatedItems.map((movie) => (
             <Card
               key={movie.id}
               className="border border-white/10 bg-card transition-colors hover:border-white/20"
@@ -359,6 +373,15 @@ const WatchlistPage = () => {
           ))}
         </div>
       )}
+
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        totalItems={totalItems}
+      />
     </div>
   );
 };

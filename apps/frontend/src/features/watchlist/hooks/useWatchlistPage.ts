@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { fetchMovieDetails } from "@/features/watchlist/services/watchlist.service";
 import { useWatchlist } from "@/features/watchlist/context/WatchlistContext";
 import { WatchlistMovie } from "@/features/watchlist/types";
@@ -90,37 +90,45 @@ export function useWatchlistPage() {
     );
   };
 
-  const filteredAndSortedMovies = movies
-    .filter((movie) => {
-      const matchesSearch = movie.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const matchesFilter =
-        filterBy === "all" ||
-        (filterBy === "watched" && movie.watched) ||
-        (filterBy === "unwatched" && !movie.watched) ||
-        (filterBy === "rated" && movie.userRating > 0);
-      const matchesTab =
-        activeTab === "all" ||
-        (activeTab === "unwatched" && !movie.watched) ||
-        (activeTab === "watched" && movie.watched);
-      return matchesSearch && matchesFilter && matchesTab;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "year":
-          return b.year - a.year;
-        case "rating":
-          return b.rating - a.rating;
-        case "userRating":
-          return b.userRating - a.userRating;
-        case "dateAdded":
-        default:
-          return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime();
-      }
-    });
+  // Memoized so consumers (e.g. page pagination) see a stable identity that
+  // only changes when the underlying list or filters actually change.
+  const filteredAndSortedMovies = useMemo(
+    () =>
+      movies
+        .filter((movie) => {
+          const matchesSearch = movie.title
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+          const matchesFilter =
+            filterBy === "all" ||
+            (filterBy === "watched" && movie.watched) ||
+            (filterBy === "unwatched" && !movie.watched) ||
+            (filterBy === "rated" && movie.userRating > 0);
+          const matchesTab =
+            activeTab === "all" ||
+            (activeTab === "unwatched" && !movie.watched) ||
+            (activeTab === "watched" && movie.watched);
+          return matchesSearch && matchesFilter && matchesTab;
+        })
+        .sort((a, b) => {
+          switch (sortBy) {
+            case "title":
+              return a.title.localeCompare(b.title);
+            case "year":
+              return b.year - a.year;
+            case "rating":
+              return b.rating - a.rating;
+            case "userRating":
+              return b.userRating - a.userRating;
+            case "dateAdded":
+            default:
+              return (
+                new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
+              );
+          }
+        }),
+    [movies, searchQuery, filterBy, activeTab, sortBy],
+  );
 
   const watchedMovies = movies.filter((movie) => movie.watched);
   const unwatchedMovies = movies.filter((movie) => !movie.watched);

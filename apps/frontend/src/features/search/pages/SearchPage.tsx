@@ -12,6 +12,9 @@ import {
 } from "@/shared/components/ui/select";
 import { Slider } from "@/shared/components/ui/slider";
 import MovieCard from "@/features/movies/components/MovieCard";
+import { Reveal } from "@/shared/components/Reveal";
+import { PaginationControls } from "@/shared/components/PaginationControls";
+import { usePagination } from "@/shared/hooks/usePagination";
 import { useMovieSearch } from "@/features/search/hooks/useMovieSearch";
 
 const SearchPage = () => {
@@ -24,11 +27,24 @@ const SearchPage = () => {
     setRatingRange,
     yearRange,
     setYearRange,
+    yearBounds,
     filteredMovies,
     loading,
     genres,
     handleSearch,
   } = useMovieSearch();
+
+  // filteredMovies is memoized in the hook, so pagination resets only when
+  // the query or filters actually change.
+  const {
+    page,
+    setPage,
+    totalPages,
+    paginatedItems,
+    rangeStart,
+    rangeEnd,
+    totalItems,
+  } = usePagination(filteredMovies, 12);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -106,13 +122,24 @@ const SearchPage = () => {
             <Slider
               value={yearRange}
               onValueChange={setYearRange}
-              max={2024}
-              min={2000}
+              max={yearBounds[1]}
+              min={yearBounds[0]}
               step={1}
             />
           </div>
         </CardContent>
       </Card>
+
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 className="text-lg font-semibold text-foreground">
+          {searchQuery ? `Results for "${searchQuery}"` : "Popular right now"}
+        </h2>
+        {!loading && filteredMovies.length > 0 && (
+          <span className="text-sm text-muted-foreground">
+            {filteredMovies.length} title{filteredMovies.length === 1 ? "" : "s"}
+          </span>
+        )}
+      </div>
 
       {loading ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -122,19 +149,20 @@ const SearchPage = () => {
         </div>
       ) : filteredMovies.length > 0 ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {filteredMovies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={{
-                id: movie.id,
-                title: movie.title,
-                poster_path: movie.poster_path,
-                backdrop_path: (movie as { backdrop_path?: string | null }).backdrop_path ?? null,
-                vote_average: movie.vote_average || 0,
-                release_date: movie.release_date || "",
-                genre_ids: movie.genre_ids,
-              }}
-            />
+          {paginatedItems.map((movie, i) => (
+            <Reveal key={movie.id} delay={(i % 4) * 70}>
+              <MovieCard
+                movie={{
+                  id: movie.id,
+                  title: movie.title,
+                  poster_path: movie.poster_path,
+                  backdrop_path: (movie as { backdrop_path?: string | null }).backdrop_path ?? null,
+                  vote_average: movie.vote_average || 0,
+                  release_date: movie.release_date || "",
+                  genre_ids: movie.genre_ids,
+                }}
+              />
+            </Reveal>
           ))}
         </div>
       ) : (
@@ -143,10 +171,19 @@ const SearchPage = () => {
           <p className="mt-2 text-sm text-muted-foreground">
             {searchQuery
               ? "Try a different query or loosen the filters."
-              : "Enter a title above to start searching."}
+              : "No title in this genre matches the current rating and year ranges."}
           </p>
         </div>
       )}
+
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        totalItems={totalItems}
+      />
     </div>
   );
 };

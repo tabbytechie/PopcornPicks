@@ -1,13 +1,57 @@
+import { useMemo } from "react";
 import { RefreshCw } from "lucide-react";
 
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import MovieCard from "@/features/movies/components/MovieCard";
+import { Reveal } from "@/shared/components/Reveal";
+import { PaginationControls } from "@/shared/components/PaginationControls";
+import { usePagination } from "@/shared/hooks/usePagination";
 import { useRecommendations } from "@/features/recommendations/hooks/useRecommendations";
+
+/** A movie paired with the section it came from, so paginated slices can be
+    regrouped back under their original headings. */
+type RecommendationSection = ReturnType<typeof useRecommendations>["recommendationSections"][number];
+type FlatEntry = {
+  key: string;
+  section: RecommendationSection;
+  movie: RecommendationSection["movies"][number];
+};
 
 const RecommendationsPage = () => {
   const { recommendationSections, loading, error, refreshing, handleRefresh } =
     useRecommendations();
+
+  // Flatten every section into one pool so pagination cuts across all rails,
+  // then regroup the current page back under each section heading.
+  const flatEntries = useMemo<FlatEntry[]>(
+    () =>
+      recommendationSections.flatMap((section) =>
+        section.movies.map((movie) => ({
+          key: `${section.title}-${movie.id}`,
+          section,
+          movie,
+        })),
+      ),
+    [recommendationSections],
+  );
+
+  const { page, setPage, totalPages, paginatedItems, rangeStart, rangeEnd, totalItems } =
+    usePagination(flatEntries, 12);
+
+  // Sections present on this page, in original order, each with its slice.
+  const pageSections = useMemo(() => {
+    const groups = new Map<string, FlatEntry[]>();
+    for (const entry of paginatedItems) {
+      const group = groups.get(entry.section.title);
+      if (group) group.push(entry);
+      else groups.set(entry.section.title, [entry]);
+    }
+    return [...groups.values()].map((entries) => ({
+      section: entries[0].section,
+      entries,
+    }));
+  }, [paginatedItems]);
 
   if (loading) {
     return (
@@ -67,7 +111,7 @@ const RecommendationsPage = () => {
         </div>
       ) : (
         <div className="space-y-12">
-          {recommendationSections.map((section) => {
+          {pageSections.map(({ section, entries }) => {
             const Icon = section.icon;
             return (
               <section key={section.title}>
@@ -83,8 +127,10 @@ const RecommendationsPage = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                  {section.movies.map((movie) => (
-                    <MovieCard key={movie.id} movie={movie} />
+                  {entries.map((entry, i) => (
+                    <Reveal key={entry.key} delay={(i % 4) * 70}>
+                      <MovieCard movie={entry.movie} />
+                    </Reveal>
                   ))}
                 </div>
               </section>
@@ -92,6 +138,15 @@ const RecommendationsPage = () => {
           })}
         </div>
       )}
+
+      <PaginationControls
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        totalItems={totalItems}
+      />
     </div>
   );
 };

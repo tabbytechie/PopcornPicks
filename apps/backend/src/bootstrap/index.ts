@@ -35,14 +35,25 @@ export function createApp(): Express {
     res.json({ status: 'ok', db: db ? 'ok' : 'not-configured' });
   });
 
+  // Root index: this service has no UI, so answer "/" with a machine-readable
+  // pointer instead of Express' "Cannot GET /" HTML page.
+  app.get('/', (_req, res) => {
+    res.json({
+      name: 'PopcornPicks API',
+      health: '/health',
+      api: ['/api/auth', '/api/movies', '/api/shows', '/api/search', '/api/watchlists'],
+    });
+  });
+
   app.use('/api/auth', authRouter);
   app.use('/api/movies', moviesRouter);
   app.use('/api/shows', showsRouter);
   app.use('/api/search', searchRouter);
   app.use('/api/watchlists', watchlistRouter);
 
-  // 404 for unknown API routes
-  app.use('/api', (_req, res) => {
+  // JSON 404 for every unmatched path (API typos included), so clients never
+  // get the HTML "Cannot GET /" default.
+  app.use((_req, res) => {
     res.status(404).json({ error: 'Not found' });
   });
 

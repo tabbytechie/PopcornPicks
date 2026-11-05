@@ -1,0 +1,30 @@
+# Root dockerignore — the dev images under docker/images build with the
+# repository root as their context, so everything ignored here must be rebuilt
+# by `npm ci` inside the image instead of leaking from the host.
+
+# Host node_modules are built for macOS and must never end up in a Linux image.
+node_modules
+**/node_modules
+
+# Build output is regenerated inside the image / by the dev server.
+dist
+**/dist
+coverage
+**/*.tsbuildinfo
+
+# Secrets are injected at runtime (env_file / environment), never baked into layers.
+**/.env
+**/.env.local
+**/.env.*.local
+!**/.env.example
+
+# VCS / tooling / OS noise.
+.git
+.github
+.vscode
+.husky
+.DS_Store
+**/*.log
+
+# Local database dumps live on the host only.
+docker/backups

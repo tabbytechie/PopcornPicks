@@ -112,6 +112,10 @@ export const catalogApi = {
       get<TitlePage<Show>>('/api/shows/trending', { window }),
     popular: (page = 1) => get<TitlePage<Show>>('/api/shows/popular', pageParams({}, page)),
     topRated: (page = 1) => get<TitlePage<Show>>('/api/shows/top-rated', pageParams({}, page)),
+    airingToday: (page = 1) =>
+      get<TitlePage<Show>>('/api/shows/airing-today', pageParams({}, page)),
+    onTheAir: (page = 1) =>
+      get<TitlePage<Show>>('/api/shows/on-the-air', pageParams({}, page)),
     search: (query: string, page = 1) =>
       get<TitlePage<Show>>('/api/shows/search', pageParams({ q: query }, page)),
     byId: (id: number) => get<Show>(`/api/shows/${id}`),

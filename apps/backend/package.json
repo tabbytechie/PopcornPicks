@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@popcornpicks/config": "*",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.0.0",

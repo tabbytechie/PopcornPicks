@@ -305,6 +305,8 @@ export const tmdbService = {
   },
   getPopularShows: (page = 1) => showList('/popular', { page }),
   getTopRatedShows: (page = 1) => showList('/top_rated', { page }),
+  getAiringTodayShows: (page = 1) => showList('/airing_today', { page }),
+  getOnTheAirShows: (page = 1) => showList('/on_the_air', { page }),
   searchShows: (query: string, page = 1) => searchPage('tv', query, page, mapShow),
   async getShowById(id: number): Promise<Show> {
     const data = await tmdbGet<TmdbRawShowDetails>(`/tv/${id}`);

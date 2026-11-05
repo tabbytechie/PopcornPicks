@@ -27,7 +27,9 @@ export const MovieHero = ({
   onToggleWatchlist,
   onPlayTrailer,
 }: MovieHeroProps) => (
-  <section className="relative min-h-[80vh]">
+  // -mt-16 cancels the layout's pt-16 header offset so the backdrop reaches
+  // the very top of the viewport when the auto-hiding navbar slides away.
+  <section className="relative -mt-16 min-h-[80vh]">
     {/* Backdrop */}
     <div
       className="absolute inset-0 bg-cover bg-center"
@@ -38,8 +40,9 @@ export const MovieHero = ({
         backgroundColor: "#141414",
       }}
     />
-    {/* Netflix-style readability scrim */}
-    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/30" />
+    {/* Netflix-style readability scrim — pinned to the fixed dark tone so the
+        backdrop reads identically in light and dark mode (never washed white). */}
+    <div className="absolute inset-0 bg-gradient-to-t from-netflix-bg via-netflix-bg/70 to-netflix-bg/30" />
 
     <div className="relative mx-auto flex min-h-[80vh] max-w-7xl items-end px-4 pb-12 pt-24 sm:px-6 lg:px-8">
       <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
@@ -56,7 +59,7 @@ export const MovieHero = ({
         <div>
           <Link
             to="/browse"
-            className="mb-4 inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground"
+            className="mb-4 inline-flex items-center gap-2 text-sm text-white/70 hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to browse
@@ -67,10 +70,10 @@ export const MovieHero = ({
           </h1>
 
           {movie.tagline && (
-            <p className="mt-2 text-lg italic text-foreground/70">"{movie.tagline}"</p>
+            <p className="mt-2 text-lg italic text-white/70">"{movie.tagline}"</p>
           )}
 
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-foreground/80">
+          <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-white/80">
             <span className="inline-flex items-center gap-1">
               <Star className="h-4 w-4 fill-netflix-red text-netflix-red" />
               <span className="font-semibold">{movie.voteAverage.toFixed(1)}</span>
@@ -95,7 +98,7 @@ export const MovieHero = ({
             </div>
           )}
 
-          <p className="mt-6 max-w-3xl text-foreground/90">
+          <p className="mt-6 max-w-3xl text-white/90">
             {movie.overview || "No description available."}
           </p>
 

@@ -5,6 +5,7 @@ import {
   Database,
   Film,
   Heart,
+  MapPin,
   MessageCircle,
   Palette,
   Star,
@@ -12,9 +13,13 @@ import {
   Zap,
 } from "lucide-react";
 
+import {
+  MarketingHero,
+  SectionHeading,
+} from "@/features/marketing/components/MarketingHero";
+import { Reveal } from "@/shared/components/Reveal";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 
 const JOBS = [
   {
@@ -110,114 +115,141 @@ const BENEFITS = [
 ];
 
 const CareersPage = () => (
-  <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-    <header className="mb-14 text-center">
-      <p className="text-xs uppercase tracking-widest text-netflix-red">Careers</p>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-        Join our team
-      </h1>
-      <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-        Build the product millions of movie lovers use to find their next watch.
-      </p>
-    </header>
-
-    {/* Benefits */}
-    <section className="mb-16">
-      <h2 className="mb-8 text-center text-2xl font-bold text-foreground">Why PopcornPicks</h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {BENEFITS.map((b) => {
-          const Icon = b.icon;
-          return (
-            <Card key={b.title} className="border border-white/10 bg-card">
-              <CardContent className="p-6 text-center">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded bg-netflix-red/15">
-                  <Icon className="h-5 w-5 text-netflix-red" />
-                </div>
-                <h3 className="mb-2 text-base font-semibold text-foreground">{b.title}</h3>
-                <p className="text-sm text-muted-foreground">{b.description}</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+  <div className="bg-background">
+    <MarketingHero
+      eyebrow="Careers"
+      title="Join our team"
+      description="Build the product millions of movie lovers use to find their next watch."
+    >
+      <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <Button asChild variant="primary-red" size="lg">
+          <a href="#openings">
+            View open roles
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </Button>
+        <Button asChild variant="glass" size="lg">
+          <a href="mailto:careers@popcornpicks.com">Send your resume</a>
+        </Button>
       </div>
-    </section>
+    </MarketingHero>
 
-    {/* Job openings */}
-    <section className="mb-16">
-      <h2 className="mb-8 text-center text-2xl font-bold text-foreground">Current openings</h2>
-      <div className="grid gap-4 lg:grid-cols-2">
-        {JOBS.map((job) => {
-          const Icon = job.icon;
-          return (
-            <Card key={job.id} className="border border-white/10 bg-card">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded bg-secondary">
-                      <Icon className="h-5 w-5 text-foreground" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-foreground">
-                        {job.title}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">{job.department}</p>
-                    </div>
+    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      {/* Benefits */}
+      <section className="mb-20">
+        <SectionHeading
+          eyebrow="Why PopcornPicks"
+          title="Benefits worth logging in for"
+          description="We take care of the people who take care of the product."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {BENEFITS.map((b, i) => {
+            const Icon = b.icon;
+            return (
+              <Reveal key={b.title} delay={(i % 4) * 80}>
+                <div className="h-full rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-netflix-red/40">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-netflix-red/30 bg-netflix-red/10 text-netflix-red">
+                    <Icon className="h-5 w-5" />
                   </div>
-                  <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
-                    {job.type}
-                  </Badge>
+                  <h3 className="mb-2 text-base font-semibold text-foreground">{b.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{b.description}</p>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm text-foreground/80">{job.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {job.skills.map((s) => (
-                    <Badge
-                      key={s}
-                      variant="outline"
-                      className="border-white/20 text-muted-foreground"
-                    >
-                      {s}
-                    </Badge>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                  <span>{job.location}</span>
-                  <span>{job.experience}</span>
-                </div>
-                <Button variant="primary-red" className="w-full">
-                  Apply now
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-    </section>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
 
-    {/* CTA */}
-    <Card className="mx-auto max-w-3xl border border-white/10 bg-card">
-      <CardContent className="p-8 text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded bg-netflix-red/15">
-          <Briefcase className="h-6 w-6 text-netflix-red" />
+      {/* Job openings */}
+      <section id="openings" className="mb-20 scroll-mt-24">
+        <SectionHeading
+          eyebrow="Open roles"
+          title="Current openings"
+          description="Six ways to help movie lovers find their next watch."
+        />
+        <div className="grid gap-5 lg:grid-cols-2">
+          {JOBS.map((job, i) => {
+            const Icon = job.icon;
+            return (
+              <Reveal key={job.id} delay={(i % 2) * 90}>
+                <div className="group flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-netflix-red/40">
+                  <div className="mb-4 flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-secondary text-foreground">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground">{job.title}</h3>
+                        <p className="text-sm text-muted-foreground">{job.department}</p>
+                      </div>
+                    </div>
+                    <Badge variant="secondary" className="flex-shrink-0 bg-secondary text-secondary-foreground">
+                      {job.type}
+                    </Badge>
+                  </div>
+
+                  <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{job.description}</p>
+
+                  <div className="mb-5 flex flex-wrap gap-2">
+                    {job.skills.map((s) => (
+                      <Badge key={s} variant="outline" className="border-border text-muted-foreground">
+                        {s}
+                      </Badge>
+                    ))}
+                  </div>
+
+                  <div className="mt-auto flex items-center justify-between border-t border-border pt-4 text-sm text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <MapPin className="h-4 w-4" />
+                      {job.location}
+                    </span>
+                    <span>{job.experience}</span>
+                  </div>
+
+                  <Button variant="primary-red" className="mt-5 w-full">
+                    Apply now
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
-        <h2 className="mb-3 text-2xl font-bold text-foreground">Ready to apply?</h2>
-        <p className="mx-auto mb-6 max-w-xl text-muted-foreground">
-          If you're passionate about movies and product, send your resume and a note about why
-          PopcornPicks — we read every message.
-        </p>
-        <div className="flex flex-col justify-center gap-3 sm:flex-row">
-          <Button asChild variant="primary-red">
-            <a href="mailto:careers@popcornpicks.com">Email your resume</a>
-          </Button>
-          <Button variant="glass">
-            <MessageCircle className="mr-2 h-4 w-4" />
-            Join talent community
-          </Button>
+      </section>
+
+      {/* CTA */}
+      <Reveal>
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(40rem 20rem at 50% -20%, rgba(229,9,20,0.14), transparent 60%)",
+            }}
+          />
+          <div className="relative px-6 py-12 text-center sm:px-12">
+            <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl border border-netflix-red/30 bg-netflix-red/10 text-netflix-red">
+              <Briefcase className="h-6 w-6" />
+            </div>
+            <h2 className="mb-3 text-2xl font-bold text-foreground">Ready to apply?</h2>
+            <p className="mx-auto mb-7 max-w-xl text-muted-foreground">
+              If you're passionate about movies and product, send your resume and a note about why
+              PopcornPicks — we read every message.
+            </p>
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild variant="primary-red">
+                <a href="mailto:careers@popcornpicks.com">Email your resume</a>
+              </Button>
+              <Button variant="glass">
+                <MessageCircle className="h-4 w-4" />
+                Join talent community
+              </Button>
+            </div>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </Reveal>
+    </div>
   </div>
 );
 

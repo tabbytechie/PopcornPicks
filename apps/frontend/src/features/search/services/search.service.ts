@@ -17,4 +17,12 @@ export async function fetchMovieGenres(): Promise<Genre[]> {
   return data.genres;
 }
 
+/**
+ * Browse fallback for an empty query, so /search opens on real titles instead
+ * of a dead grid.
+ */
+export async function fetchPopularMovies(page = 1): Promise<TitlePage<Movie>> {
+  return catalogApi.movies.popular(page);
+}
+
 export type { Genre, Movie };

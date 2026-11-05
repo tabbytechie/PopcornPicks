@@ -17,6 +17,88 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      - popcornpicks
+
+  # Backend API (Express + TMDB proxy) — http://localhost:2789
+  backend:
+    # Context is the repo root because the app lives in an npm workspace.
+    build:
+      context: .
+      dockerfile: docker/images/backend/Dockerfile.dev
+    container_name: popcornpicks-backend
+    restart: unless-stopped
+    # Secrets (TMDB_API_KEY, JWT_SECRET) come from the developer's local .env.
+    # Missing file is tolerated; the backend exits with a copy-.env.example hint.
+    env_file:
+      - path: ./apps/backend/.env
+        required: false
+    environment:
+      NODE_ENV: development
+      PORT: '4000'
+      # In-network Postgres instead of the host's mapped 5433.
+      DATABASE_URL: postgres://popcornpicks:popcornpicks@postgres:5432/popcornpicks
+      # Only needed if the browser bypasses the Vite proxy and hits this API directly.
+      ALLOWED_ORIGINS: http://localhost:${WEB_PORT:-4309}
+    ports:
+      # Host 2789 -> container 4000 (backend dev server).
+      - '${BACKEND_PORT:-2789}:4000'
+    volumes:
+      # Source-only mounts: hot reload without leaking macOS node_modules.
+      - ./apps/backend/src:/repo/apps/backend/src:delegated
+      - ./packages:/repo/packages:delegated
+      - ./database/migrations:/repo/database/migrations:delegated
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:4000/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - popcornpicks
+
+  # Web frontend (Vite dev server) — http://localhost:4309
+  web:
+    build:
+      context: .
+      dockerfile: docker/images/frontend/Dockerfile.dev
+    container_name: popcornpicks-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      # Empty => the browser calls same-origin /api and Vite proxies it to the
+      # backend service, so there is no CORS dance and no host-port leakage.
+      VITE_API_URL: ''
+      VITE_PROXY_TARGET: http://backend:4000
+    ports:
+      # Host 4309 -> container 8080 (Vite's configured dev port).
+      - '${WEB_PORT:-4309}:8080'
+    volumes:
+      - ./apps/frontend/src:/repo/apps/frontend/src:delegated
+      - ./apps/frontend/index.html:/repo/apps/frontend/index.html:delegated
+      - ./apps/frontend/vite.config.ts:/repo/apps/frontend/vite.config.ts:delegated
+      - ./apps/frontend/postcss.config.js:/repo/apps/frontend/postcss.config.js:delegated
+      - ./apps/frontend/tailwind.config.ts:/repo/apps/frontend/tailwind.config.ts:delegated
+      - ./packages:/repo/packages:delegated
+    depends_on:
+      - backend
+    healthcheck:
+      # 127.0.0.1 on purpose: busybox wget resolves "localhost" to ::1 first and
+      # Vite only binds IPv4 (0.0.0.0) in here, which would report a false failure.
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:8080']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - popcornpicks
+
+networks:
+  popcornpicks:
+    driver: bridge
 
 volumes:
   popcornpicks-pgdata:
