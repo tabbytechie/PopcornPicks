@@ -20,7 +20,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "lint:boundaries": "npm run lint:boundaries -w @popcornpicks/backend",
     "preview": "npm run preview -w @popcornpicks/frontend",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "engines": {
     "node": ">=18"
