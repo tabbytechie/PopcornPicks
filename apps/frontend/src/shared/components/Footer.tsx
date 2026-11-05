@@ -43,7 +43,7 @@ const LinkColumn = ({ title, links }: { title: string; links: { href: string; la
 );
 
 const Footer = () => (
-  <footer className="border-t border-white/10 bg-netflix-bg">
+  <footer className="border-t border-border bg-background">
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
         <div>
@@ -66,7 +66,7 @@ const Footer = () => (
         <LinkColumn title="Support" links={SUPPORT_LINKS} />
       </div>
 
-      <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center">
+      <div className="mt-10 flex flex-col items-start justify-between gap-4 border-t border-border pt-6 md:flex-row md:items-center">
         <p className="text-sm text-foreground/60">
           &copy; {new Date().getFullYear()} PopcornPicks. All rights reserved.
         </p>

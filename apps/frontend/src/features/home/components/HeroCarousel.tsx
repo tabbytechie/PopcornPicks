@@ -93,7 +93,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-netflix-bg" />
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
             Trending now
@@ -137,7 +137,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
               }}
             />
             {/* Netflix-style readability scrim: transparent top, near-black bottom. */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-netflix-bg" />
 
             <div className="relative mx-auto w-full max-w-7xl px-4 pb-32 pt-24 sm:px-6 sm:pb-24 lg:px-8">
               <div className="max-w-2xl">
