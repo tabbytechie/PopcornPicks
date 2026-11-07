@@ -89,11 +89,11 @@ jobs:
       - name: Scan for actual secrets
         run: |
           echo "Scanning for potential secrets..."
-          if grep -rE "(sk_live|sk_test|ghp_|github_pat|AIza[0-9A-Za-z\-_]{35,}|AKIA[0-9A-Z]{16,})" README.md docs/ 2>/dev/null; then
-            echo "⚠️  WARNING: Hardcoded secret values detected in docs!"
+          if grep -rE "(sk_live|sk_test|ghp_|github_pat|AIza[0-9A-Za-z\\-_]{35,}|AKIA[0-9A-Z]{16,})" README.md docs/ 2>/dev/null; then
+            echo "WARNING: Hardcoded secret values detected in docs!"
             exit 1
           fi
-          echo "✅ No secrets detected"
+          echo "No secrets detected"
 
   security:
     runs-on: ubuntu-latest
@@ -119,14 +119,14 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          dockerfile: docker/images/backend/Dockerfile.dev
+          file: docker/images/backend/Dockerfile.dev
           load: true
           tags: popcornpicks-backend:ci
       - name: Build frontend dev image
         uses: docker/build-push-action@v5
         with:
           context: .
-          dockerfile: docker/images/frontend/Dockerfile.dev
+          file: docker/images/frontend/Dockerfile.dev
           load: true
           tags: popcornpicks-frontend:ci
 
@@ -137,9 +137,16 @@ jobs:
     steps:
       - name: Report CI status
         run: |
-          echo "CI Jobs: ${{ join(needs.*.result, ', ') }}"
-          if contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'); then
-            echo "❌ CI failed"
+          LINT="${{ needs.lint.result }}"
+          TYPECHECK="${{ needs.typecheck.result }}"
+          FRONTEND="${{ needs.frontend.result }}"
+          BACKEND="${{ needs.backend.result }}"
+          DOCS="${{ needs.docs.result }}"
+          SECURITY="${{ needs.security.result }}"
+          DOCKER="${{ needs.docker.result }}"
+          echo "CI Jobs: lint=$LINT, typecheck=$TYPECHECK, frontend=$FRONTEND, backend=$BACKEND, docs=$DOCS, security=$SECURITY, docker=$DOCKER"
+          if [ "$LINT" = "failure" ] || [ "$TYPECHECK" = "failure" ] || [ "$FRONTEND" = "failure" ] || [ "$BACKEND" = "failure" ] || [ "$DOCS" = "failure" ] || [ "$SECURITY" = "failure" ] || [ "$DOCKER" = "failure" ] || [ "$LINT" = "cancelled" ] || [ "$TYPECHECK" = "cancelled" ] || [ "$FRONTEND" = "cancelled" ] || [ "$BACKEND" = "cancelled" ] || [ "$DOCS" = "cancelled" ] || [ "$SECURITY" = "cancelled" ] || [ "$DOCKER" = "cancelled" ]; then
+            echo "CI failed"
             exit 1
           fi
-          echo "✅ All CI jobs passed"
+          echo "All CI jobs passed"
