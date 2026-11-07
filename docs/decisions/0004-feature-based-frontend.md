@@ -15,3 +15,14 @@ adhere to the folder layout.
 ## Consequences
 - Feature code is cohesive and local.
 - Shared folders stay small; duplicated code is eliminated.
+
+## Related Documents
+
+- [`docs/architecture/frontend.md`](../architecture/frontend.md) — Frontend architecture
+- [`docs/architecture/module-conventions.md`](../architecture/module-conventions.md) — Module conventions
+- [`docs/contributing/folder-conventions.md`](../../contributing/folder-conventions.md) — Folder conventions
+
+## Implementation Status
+
+✅ Implemented — Features organized under `apps/frontend/src/features/` with barrel `index.ts`
+📋 Future — New features follow the same pattern as the codebase grows

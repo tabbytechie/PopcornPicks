@@ -37,9 +37,9 @@ const DEFAULT_BACKDROP =
    Same footprint as each other, reduced 30% from the original ~183x72
    desktop size (~128x50 now), scaled down further below sm. */
 const DETAILS_BUTTON_CLASS =
-  "h-7 w-[72px] gap-1 rounded-lg border border-[#555555] bg-[#242222] px-2 text-xs font-semibold text-white shadow-none hover:bg-[#343232] hover:text-white sm:h-10 sm:w-[105px] sm:gap-1.5 sm:px-3 sm:text-sm lg:h-[50px] lg:w-[128px]";
+  "h-6 w-[60px] gap-1 rounded-lg border border-[#555555] bg-[#242222] px-1.5 text-[10px] font-semibold text-white shadow-none [&_svg]:h-3 [&_svg]:w-3 hover:bg-[#343232] hover:text-white sm:h-7 sm:w-[72px] sm:gap-1 sm:px-2 sm:text-xs sm:[&_svg]:h-4 sm:[&_svg]:w-4 lg:h-[50px] lg:w-[128px] lg:gap-1.5 lg:px-3 lg:text-sm";
 const PLAY_BUTTON_CLASS =
-  "h-7 w-[72px] gap-1 rounded-lg border border-[#ED2D0B] bg-[#ED2D0B] px-2 text-xs font-semibold text-white shadow-none [&_svg]:h-3.5 [&_svg]:w-3.5 hover:border-[#ff3b1c] hover:bg-[#ff3b1c] hover:text-white sm:h-10 sm:w-[105px] sm:gap-1.5 sm:px-3 sm:text-sm sm:[&_svg]:h-4 sm:[&_svg]:w-4 lg:h-[50px] lg:w-[128px]";
+  "h-6 w-[60px] gap-1 rounded-lg border border-[#ED2D0B] bg-[#ED2D0B] px-1.5 text-[10px] font-semibold text-white shadow-none [&_svg]:h-3 [&_svg]:w-3 hover:border-[#ff3b1c] hover:bg-[#ff3b1c] hover:text-white sm:h-7 sm:w-[72px] sm:gap-1 sm:px-2 sm:text-xs sm:[&_svg]:h-4 sm:[&_svg]:w-4 lg:h-[50px] lg:w-[128px] lg:gap-1.5 lg:px-3 lg:text-sm";
 
 const backdropSrcFor = (movie: Movie) =>
   movie.backdrop_path
@@ -87,15 +87,15 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
 
   if (slides.length === 0) {
     return (
-      <section className="relative -mt-16 flex min-h-screen items-end overflow-hidden">
+      <section className="relative -mt-12 sm:-mt-16 flex min-h-screen items-end overflow-hidden">
         <img
           src={DEFAULT_BACKDROP}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover aspect-[16/9]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-netflix-bg" />
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-24 sm:px-6 lg:px-8">
-          <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 pb-20 sm:pt-20 sm:pb-24 sm:px-6 lg:pt-24 lg:pb-32 lg:px-8">
+          <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl xl:text-6xl">
             Trending now
           </h1>
         </div>
@@ -105,7 +105,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
 
   return (
     <section
-      className="relative -mt-16 flex min-h-screen items-end overflow-hidden"
+      className="relative -mt-12 sm:-mt-16 flex min-h-screen items-end overflow-hidden"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -130,7 +130,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
             <img
               src={backdropSrcFor(movie)}
               alt={movie.title}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover aspect-[16/9]"
               onError={(e) => {
                 const target = e.currentTarget;
                 if (target.src !== DEFAULT_BACKDROP) target.src = DEFAULT_BACKDROP;
@@ -139,12 +139,12 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
             {/* Netflix-style readability scrim: transparent top, near-black bottom. */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-netflix-bg" />
 
-            <div className="relative mx-auto w-full max-w-7xl px-4 pb-32 pt-24 sm:px-6 sm:pb-24 lg:px-8">
+            <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 pb-20 sm:pt-20 sm:pb-24 sm:px-6 lg:pt-24 lg:pb-32 lg:px-8">
               <div className="max-w-2xl">
-                <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl xl:text-6xl">
                   {movie.title}
                 </h1>
-                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-white/85">
+                <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-white/85 sm:gap-x-3">
                   {year && <span>{year}</span>}
                   {movie.genreName && (
                     <>
@@ -162,11 +162,11 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
               </div>
             </div>
 
-            {/* Actions — bottom-right of the screen, bound to this slide's movie */}
-            <div className="absolute bottom-20 right-4 z-20 flex items-center gap-2 sm:bottom-12 sm:right-6 sm:gap-3 lg:bottom-10 lg:right-8">
+            {/* Actions — in flow on phones (no overlap with title), absolute bottom-right on sm+ */}
+            <div className="z-20 flex items-center gap-2 mb-4 sm:absolute sm:bottom-12 sm:right-6 sm:mb-0 sm:gap-3 lg:bottom-10 lg:right-8">
               <Link to={`/movie/${movie.id}`} aria-label={`Details for ${movie.title}`}>
                 <Button variant="ghost" className={DETAILS_BUTTON_CLASS}>
-                  <Play className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <Play className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   Details
                 </Button>
               </Link>
@@ -184,7 +184,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
 
       {/* Slide indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 sm:bottom-8">
           {slides.map((movie, index) => (
             <button
               key={movie.id}

@@ -1,0 +1,55 @@
+# Netlify configuration for PopcornPicks frontend.
+#
+# This is a monorepo (frontend + backend + shared packages). Netlify only
+# needs to build and publish the Vite frontend. The backend is intentionally
+# excluded because it requires a live PostgreSQL database and secrets that
+# are not available at build time.
+
+[build]
+  # Build from the repo root so npm workspaces install all packages
+  # (including @popcornpicks/* workspace deps) before building.
+  base = ""
+  command = "npm ci && npm run build:frontend"
+  publish = "apps/frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# ---------------------------------------------------------------------------
+# Redirects
+# ---------------------------------------------------------------------------
+
+# Serve the SPA entrypoint for any client-side route so React Router works
+# on direct visits / refreshes. Static assets and API paths are excluded.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Path = "!/*.*"}
+
+# ---------------------------------------------------------------------------
+# Headers
+# ---------------------------------------------------------------------------
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/favicon.*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"

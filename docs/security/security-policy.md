@@ -28,7 +28,7 @@ TMDB API key was committed to Git repository in `apps/frontend/.env.local`
    git filter-branch --force --index-filter \
      "git rm --cached --ignore-unmatch apps/frontend/.env.local" \
      --prune-empty --tag-name-filter cat -- --all
-   
+
    # Force push to remote (WARNING: rewrites history)
    git push origin --force --all
    ```
@@ -125,7 +125,7 @@ Add pre-commit hook to check for secrets:
 . "$(dirname "$0")/_/husky.sh"
 
 # Check for potential secrets in staged files
-if git diff --cached --name-only | xargs grep -l "API_KEY\|SECRET\|PASSWORD\|TOKEN"; then
+if git diff --cached --name-only | xargs grep -l "API_KEY\| SECRET\| PASSWORD\| TOKEN"; then
   echo "⚠️  WARNING: Potential secrets detected in staged files!"
   echo "Please review before committing."
   exit 1
