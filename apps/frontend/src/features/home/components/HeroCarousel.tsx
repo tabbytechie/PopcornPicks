@@ -91,7 +91,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
         <img
           src={DEFAULT_BACKDROP}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover aspect-[16/9]"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-netflix-bg" />
         <div className="relative mx-auto w-full max-w-7xl px-4 pt-16 pb-20 sm:pt-20 sm:pb-24 sm:px-6 lg:pt-24 lg:pb-32 lg:px-8">
@@ -130,7 +130,7 @@ export const HeroCarousel = ({ movies }: HeroCarouselProps) => {
             <img
               src={backdropSrcFor(movie)}
               alt={movie.title}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover aspect-[16/9]"
               onError={(e) => {
                 const target = e.currentTarget;
                 if (target.src !== DEFAULT_BACKDROP) target.src = DEFAULT_BACKDROP;
