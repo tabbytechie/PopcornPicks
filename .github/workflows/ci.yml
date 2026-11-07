@@ -129,24 +129,3 @@ jobs:
           file: docker/images/frontend/Dockerfile.dev
           load: true
           tags: popcornpicks-frontend:ci
-
-  ci-summary:
-    runs-on: ubuntu-latest
-    needs: [lint, typecheck, frontend, backend, docs, security, docker]
-    if: always()
-    steps:
-      - name: Report CI status
-        run: |
-          LINT="${{ needs.lint.result }}"
-          TYPECHECK="${{ needs.typecheck.result }}"
-          FRONTEND="${{ needs.frontend.result }}"
-          BACKEND="${{ needs.backend.result }}"
-          DOCS="${{ needs.docs.result }}"
-          SECURITY="${{ needs.security.result }}"
-          DOCKER="${{ needs.docker.result }}"
-          echo "CI Jobs: lint=$LINT, typecheck=$TYPECHECK, frontend=$FRONTEND, backend=$BACKEND, docs=$DOCS, security=$SECURITY, docker=$DOCKER"
-          if [ "$LINT" = "failure" ] || [ "$TYPECHECK" = "failure" ] || [ "$FRONTEND" = "failure" ] || [ "$BACKEND" = "failure" ] || [ "$DOCS" = "failure" ] || [ "$SECURITY" = "failure" ] || [ "$DOCKER" = "failure" ] || [ "$LINT" = "cancelled" ] || [ "$TYPECHECK" = "cancelled" ] || [ "$FRONTEND" = "cancelled" ] || [ "$BACKEND" = "cancelled" ] || [ "$DOCS" = "cancelled" ] || [ "$SECURITY" = "cancelled" ] || [ "$DOCKER" = "cancelled" ]; then
-            echo "CI failed"
-            exit 1
-          fi
-          echo "All CI jobs passed"
