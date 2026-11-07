@@ -9,7 +9,10 @@ Detailed endpoint reference for the PopcornPicks backend API.
 - **Content-Type:** `application/json`
 - **Auth:** Bearer JWT in `Authorization` header (`Authorization: Bearer <token>`)
 
+
 ---
+
+
 
 ## 1. System Endpoints
 
@@ -18,6 +21,8 @@ Detailed endpoint reference for the PopcornPicks backend API.
 Returns service health status including database connectivity.
 
 **Response:**
+
+
 ```json
 { "status": "ok", "db": "ok" }
 ```
@@ -27,6 +32,8 @@ Returns service health status including database connectivity.
 Returns API index with available routes.
 
 **Response:**
+
+
 ```json
 {
   "name": "PopcornPicks API",
@@ -35,7 +42,10 @@ Returns API index with available routes.
 }
 ```
 
+
 ---
+
+
 
 ## 2. Authentication Endpoints
 
@@ -69,6 +79,8 @@ Authenticate and receive a JWT token.
 ```
 
 **Response (200):**
+
+
 ```json
 { "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", "expiresIn": "7d" }
 ```
@@ -78,11 +90,16 @@ Authenticate and receive a JWT token.
 Get current authenticated user profile. Requires `Authorization: Bearer <token>`.
 
 **Response (200):**
+
+
 ```json
 { "id": "uuid", "email": "user@example.com", "createdAt": "2024-01-01T00:00:00Z" }
 ```
 
+
 ---
+
+
 
 ## 3. Movie Endpoints
 
@@ -96,6 +113,8 @@ Get trending movies.
 | `window` | `day`\| `week` | `week` | Trending time window |
 
 **Response (200):**
+
+
 ```json
 {
   "page": 1,
@@ -137,25 +156,33 @@ Search movies by query.
 
 Get a movie by TMDB ID.
 
-**Response:** Normalized `Movie` DTO.
+**Response:**
+
+ Normalized `Movie` DTO.
 
 ### GET /api/movies/:id/details
 
 Get full movie details including runtime, budget, revenue, status.
 
-**Response:** Normalized `MovieDetails` DTO.
+**Response:**
+
+ Normalized `MovieDetails` DTO.
 
 ### GET /api/movies/:id/credits
 
 Get cast and crew for a movie.
 
-**Response:** Array of `Credit` objects.
+**Response:**
+
+ Array of `Credit` objects.
 
 ### GET /api/movies/:id/videos
 
 Get trailers and videos for a movie.
 
-**Response:** Array of `Video` objects.
+**Response:**
+
+ Array of `Video` objects.
 
 ### GET /api/movies/:id/similar
 
@@ -173,9 +200,14 @@ Get recommended movies.
 
 Get the list of movie genres.
 
-**Response:** Array of `Genre` objects.
+**Response:**
+
+ Array of `Genre` objects.
+
 
 ---
+
+
 
 ## 4. TV Show Endpoints
 
@@ -211,9 +243,14 @@ Search TV series by query.
 
 Get a TV show by TMDB ID.
 
-**Response:** Normalized `Show` DTO.
+**Response:**
+
+ Normalized `Show` DTO.
+
 
 ---
+
+
 
 ## 5. Search Endpoints
 
@@ -228,6 +265,8 @@ Combined movie + series search.
 | `page` | number | Page number (default: 1) |
 
 **Response:**
+
+
 ```json
 {
   "page": 1,
@@ -239,7 +278,10 @@ Combined movie + series search.
 
 Results are sorted by popularity (descending), combining movies and shows.
 
+
 ---
+
+
 
 ## 6. Watchlist Endpoints
 
@@ -249,7 +291,9 @@ All watchlist endpoints require authentication (`Authorization: Bearer <token>`)
 
 List the current user's watchlist items.
 
-**Response:** Array of watchlist items with movie/show details.
+**Response:**
+
+ Array of watchlist items with movie/show details.
 
 ### POST /api/watchlists
 
@@ -275,7 +319,10 @@ Remove an item from the user's watchlist.
 
 **Response (204):** No content.
 
+
 ---
+
+
 
 ## 7. Error Responses
 

@@ -5,6 +5,7 @@
 - Utils: `camelCase.ts`
 - Constants: `SCREAMING_SNAKE_CASE`
 
+# Detailed Rules
 ### Detailed Rules
 
 | Item | Convention | Example |

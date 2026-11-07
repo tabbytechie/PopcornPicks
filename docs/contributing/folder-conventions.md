@@ -5,6 +5,7 @@ See `docs/contributing/README.md` summary. Key rules:
 - Only genuinely reusable primitives go in `shared/`.
 - `kebab-case` for folders, `PascalCase` for component files.
 
+# Detailed Rules
 ### Detailed Rules
 
 - Feature code lives in its feature module, not in shared/common
