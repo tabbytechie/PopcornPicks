@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: 22
+  TMDB_API_KEY: ci-placeholder
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run lint:boundaries
+
+  typecheck:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: typecheck
+    defaults:
+      run:
+        working-directory: apps/frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  backend:
+    runs-on: ubuntu-latest
+    needs: typecheck
+    defaults:
+      run:
+        working-directory: apps/backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run lint:boundaries
+      - run: npm run build
+      - run: npm test
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+      - name: Lint all Markdown files
+        run: |
+          markdownlint README.md docs/ --config .markdownlint.yaml --ignore node_modules --ignore dist --ignore .git
+      - name: Scan for actual secrets
+        run: |
+          echo "Scanning for potential secrets..."
+          if grep -rE "(sk_live|sk_test|ghp_|github_pat|AIza[0-9A-Za-z\\-_]{35,}|AKIA[0-9A-Z]{16,})" README.md docs/ 2>/dev/null; then
+            echo "WARNING: Hardcoded secret values detected in docs!"
+            exit 1
+          fi
+          echo "No secrets detected"
+
+  security:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Run npm audit
+        run: npm audit --audit-level=high || true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build backend dev image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/images/backend/Dockerfile.dev
+          load: true
+          tags: popcornpicks-backend:ci
+      - name: Build frontend dev image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/images/frontend/Dockerfile.dev
+          load: true
+          tags: popcornpicks-frontend:ci
