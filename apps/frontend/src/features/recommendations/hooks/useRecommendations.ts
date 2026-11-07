@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TrendingUp, Heart, Trophy, Sparkles } from "lucide-react";
 import {
   fetchTrendingMovies,
@@ -26,7 +26,7 @@ export function useRecommendations() {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const convertMovie = (movie: NormalizedMovie): Movie => ({
+  const convertMovie = useCallback((movie: NormalizedMovie): Movie => ({
     id: movie.id,
     title: movie.title,
     poster_path: posterPathFromUrl(movie.posterUrl),
@@ -36,9 +36,9 @@ export function useRecommendations() {
     genre_ids: movie.genreIds,
     genreName: getGenreName(movie.genreIds, genres),
     video: movie.hasTrailer,
-  });
+  }), [genres]);
 
-  const fetchRecommendations = async () => {
+  const fetchRecommendations = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -85,7 +85,7 @@ export function useRecommendations() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [convertMovie]);
 
   // Fetch genres
   useEffect(() => {
@@ -105,7 +105,7 @@ export function useRecommendations() {
     if (genres.length > 0) {
       fetchRecommendations();
     }
-  }, [genres]);
+  }, [genres, fetchRecommendations]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
