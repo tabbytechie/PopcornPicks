@@ -28,7 +28,7 @@ TMDB API key was committed to Git repository in `apps/frontend/.env.local`
    git filter-branch --force --index-filter \
      "git rm --cached --ignore-unmatch apps/frontend/.env.local" \
      --prune-empty --tag-name-filter cat -- --all
-   
+
    # Force push to remote (WARNING: rewrites history)
    git push origin --force --all
    ```

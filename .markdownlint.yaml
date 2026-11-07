@@ -1,0 +1,22 @@
+# Markdownlint configuration for PopcornPicks documentation.
+#
+# Rules intentionally relaxed for this docs site:
+#   MD013 line-length  — docs contain long URLs, tables, and code snippets
+#   MD024 duplicate headings  — section titles intentionally recur across pages
+#   MD025 multiple top-level headings  — docs use multiple H1 sections
+#   MD031 blank lines around fenced code  — diagrams/prose often adjacent to fences
+#   MD034 bare URL  — docs reference many external URLs directly
+#   MD040 fenced code language  — architecture/mermaid diagrams intentionally bare
+#   MD012 multiple consecutive blank lines  — aesthetic; kept loose for authoring
+#
+# All other default rules are enforced (e.g. no trailing whitespace, files end
+# with a newline, consistent code fences, no reversed links, heading style,
+# emphasis style, ordered-list indentation, etc.).
+default: true
+MD013: false
+MD024: false
+MD025: false
+MD031: false
+MD034: false
+MD040: false
+MD012: false
