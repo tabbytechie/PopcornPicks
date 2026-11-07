@@ -61,7 +61,7 @@ The project is deliberately architected as a **Modular Monolith**: a single code
 ### Design Decisions (see `docs/decisions/`)
 
 | ADR | Decision | Status |
-|-----|----------|--------|
+| ----- | ---------- | -------- |
 | ADR-0001 | **Modular Monolith** over microservices — one repo, one deployable unit, isolated module boundaries | ✅ Accepted |
 | ADR-0002 | **PostgreSQL-first** — single datastore; pgvector, PostGIS, pg_trgm, pg_cron, pgmq, uuid; no Redis / Mongo / Elasticsearch / Kafka | ✅ Accepted |
 | ADR-0003 | **Backend hides all external APIs** — TMDB key stays server-side; frontend calls only our `/api/*` | ✅ Accepted |
@@ -74,7 +74,7 @@ The project is deliberately architected as a **Modular Monolith**: a single code
 ### Frontend (`apps/frontend`)
 
 | Layer | Technology |
-|-------|-----------|
+| ------- | ----------- |
 | Framework | React 18 + TypeScript |
 | Build tool | Vite 5 |
 | Routing | React Router DOM 6 |
@@ -88,7 +88,7 @@ The project is deliberately architected as a **Modular Monolith**: a single code
 ### Backend (`apps/backend`)
 
 | Layer | Technology |
-|-------|-----------|
+| ------- | ----------- |
 | Runtime | Node.js ≥ 18 (ESM) |
 | Framework | Express 4 |
 | Language | TypeScript 5 |
@@ -103,7 +103,7 @@ The project is deliberately architected as a **Modular Monolith**: a single code
 ### Shared Packages (`packages/*`)
 
 | Package | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `@popcornpicks/types` | Shared TypeScript DTOs: `Movie`, `Show`, `TitlePage`, `Genre`, `Credit`, `Video`, `MovieDetails` |
 | `@popcornpicks/api-client` | Typed fetch wrapper consumed by the frontend |
 | `@popcornpicks/shared` | Shared utilities, constants, helpers |
@@ -191,7 +191,7 @@ apps/backend/src/
 ## 🔧 Prerequisites
 
 | Requirement | Version | Notes |
-|-------------|---------|-------|
+| ------------- | --------- | ------- |
 | Node.js | ≥ 18 | Install via [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) |
 | npm | Bundled with Node | Comes with Node.js |
 | Docker & Docker Compose | Latest | Optional but recommended for local development |
@@ -293,7 +293,7 @@ npm test
 ### Backend Environment Variables (`apps/backend/.env`)
 
 | Variable | Required | Default | Used By |
-|----------|----------|---------|---------|
+| ---------- | ---------- | --------- | --------- |
 | `PORT` | no | `4000` | Backend listen port |
 | `TMDB_API_KEY` | **yes** | *(startup fails if missing)* | TMDB service upstream calls |
 | `TMDB_BASE_URL` | no | `https://api.themoviedb.org/3` | TMDB service |
@@ -333,14 +333,14 @@ The backend exposes a normalized REST API under `/api/*`. The `tmdb` module is t
 ### Endpoints
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| -------- | ------ | ------------- | ------ |
 | `GET` | `/health` | Service health + DB connectivity | No |
 | `GET` | `/` | API index (name, health link, route list) | No |
 
 #### Authentication (`/api/auth`)
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `POST` | `/api/auth/register` | Register a new user |
 | `POST` | `/api/auth/login` | Login & receive JWT |
 | `GET` | `/api/auth/me` | Get current user (protected) |
@@ -348,7 +348,7 @@ The backend exposes a normalized REST API under `/api/*`. The `tmdb` module is t
 #### Movies (`/api/movies`)
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `GET` | `/api/movies/trending` | Trending movies (week/day) |
 | `GET` | `/api/movies/popular` | Popular movies |
 | `GET` | `/api/movies/top_rated` | Top-rated movies |
@@ -365,7 +365,7 @@ The backend exposes a normalized REST API under `/api/*`. The `tmdb` module is t
 #### TV Shows (`/api/shows`)
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `GET` | `/api/shows/trending` | Trending TV series |
 | `GET` | `/api/shows/popular` | Popular TV series |
 | `GET` | `/api/shows/top_rated` | Top-rated TV series |
@@ -377,13 +377,13 @@ The backend exposes a normalized REST API under `/api/*`. The `tmdb` module is t
 #### Search (`/api/search`)
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `GET` | `/api/search?query=...` | Combined movie + series search |
 
 #### Watchlists (`/api/watchlists`)
 
 | Method | Path | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `GET` | `/api/watchlists` | List user's watchlist items |
 | `POST` | `/api/watchlists` | Add item to watchlist |
 | `DELETE` | `/api/watchlists/:id` | Remove from watchlist |
@@ -429,7 +429,7 @@ PopcornPicks treats **PostgreSQL as an application platform**, not merely a data
 ### Applied Migrations
 
 | Migration | Description |
-|-----------|-------------|
+| ----------- | ------------- |
 | `0001_init-users-watchlist` | Creates `users` + `watchlist_items` tables with FK, UNIQUE, CHECK constraints, and indexes |
 | `0002_watchlist-display-fields` | Adds `vote_average` and `release_date` to `watchlist_items` |
 
@@ -513,7 +513,7 @@ npm run build:frontend
 ## 📖 Documentation
 
 | Document | Path | Description |
-|----------|------|-------------|
+| ---------- | ------ | ------------- |
 | Architecture Overview | `docs/architecture/README.md` | High-level architecture & design rationale |
 | Backend Architecture | `docs/architecture/backend.md` | Express modular monolith deep dive |
 | Frontend Architecture | `docs/architecture/frontend.md` | Feature-based React architecture |
