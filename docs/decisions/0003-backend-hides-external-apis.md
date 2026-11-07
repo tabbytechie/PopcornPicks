@@ -12,3 +12,14 @@ our own endpoints. The frontend will call only our API.
 ## Consequences
 - External keys stay server-side.
 - Vendor contract changes live in one place (the api/tmdb module).
+
+## Related Documents
+
+- [`docs/api/tmdb-proxy.md`](../api/tmdb-proxy.md) — TMDB proxy architecture
+- [`docs/architecture/backend.md`](../architecture/backend.md) — Backend architecture (data normalization section)
+- [`docs/security/README.md`](../../security/README.md) — Security policy (API key protection)
+
+## Implementation Status
+
+✅ Implemented — `tmdb` module proxies all TMDB calls; frontend consumes normalized `/api/*` endpoints
+📋 Future — Additional external APIs (AI recommendations, etc.) will follow the same pattern

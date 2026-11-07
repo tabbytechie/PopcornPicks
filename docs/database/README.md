@@ -1,76 +1,121 @@
-# Database
+# 🗄️ Database
 
-PostgreSQL-first (see [ADR-0002](../decisions/0002-postgresql-first.md)). Today the
-backend runs on **one Postgres 16 instance** with a small, versioned schema applied
-through **`node-pg-migrate`**. The long-term ambition (RLS everywhere, `pgvector`,
-`pgmq`, `postgis`, per-domain slices under `database/src/domains/`) is described in
-[`database/README.md`](../../database/README.md) and is **not yet built** - this page
-documents what actually exists and runs.
+PopcornPicks treats **PostgreSQL as an application platform**, not merely a database. Following [ADR-0002 (PostgreSQL-first)](../decisions/0002-postgresql-first.md), the database owns persistence, business rules, security, search, scheduling, messaging, analytics, vector search, geospatial queries, auditing, reporting, and background jobs. The application layer is a thin orchestration layer over this platform.
 
-## Running Postgres locally
+## Philosophy
 
-Docker Compose at the repo root brings up the database:
+| Principle | Description |
+|-----------|-------------|
+| **PostgreSQL First** | Whenever PostgreSQL (or an official extension) can solve a problem, we use it. No Redis, MongoDB, Elasticsearch, Kafka, etc. |
+| **Domain-Driven Design** | Database organized by business capability (bounded contexts), not by object type |
+| **Modular Monolith** | One database, many bounded contexts. Each domain can be extracted later without rewriting the schema |
+| **Security at the data layer** | Row Level Security (RLS) on every table — the database is the enforcement point |
 
-```
+## Running PostgreSQL Locally
+
+### Via Docker Compose (Recommended)
+
+```sh
 docker compose up -d          # postgres:16-alpine, container "popcornpicks-db"
 ```
 
-The container maps **host 5433 -> container 5432** so it coexists with a local Postgres
-already on 5432. Point the backend at it:
+The container maps **host 5433 → container 5432** so it coexists with a local Postgres already on 5432. Point the backend at:
 
 ```
 DATABASE_URL=postgres://popcornpicks:popcornpicks@localhost:5433/popcornpicks
 ```
 
-Credentials (`popcornpicks` / `popcornpicks`, db `popcornpicks`) come from
-`docker-compose.yml`; a named volume `popcornpicks-pgdata` persists data.
+Credentials (`popcornpicks` / `popcornpicks`, db `popcornpicks`) come from `docker-compose.yml`. A named volume `popcornpicks-pgdata` persists data.
 
-## Migrations
+### Health Check
 
-Migrations live in `database/migrations` and are driven from the `@popcornpicks/backend`
-workspace:
-
+```sh
+docker compose exec postgres pg_isready -U popcornpicks -d popcornpicks
 ```
+
+## Applied Migrations
+
+Migrations live in `database/migrations` and are driven from the `@popcornpicks/backend` workspace:
+
+```sh
 npm run db:migrate   -w @popcornpicks/backend   # node-pg-migrate up
 npm run db:rollback  -w @popcornpicks/backend   # node-pg-migrate down
-npm run db:seed      -w @popcornpicks/backend
+npm run db:seed      -w @popcornpicks/backend   # Seed reference data
 ```
 
-### Applied schema
+### Migration History
 
-**`users`** (auth) - `id uuid PK (gen_random_uuid())`, `email text UNIQUE NOT NULL`,
-`password_hash text NOT NULL`, `created_at timestamptz NOT NULL DEFAULT now()`. Emails
-are normalized to lowercase in the auth service, so uniqueness is effectively
-case-insensitive at the application layer.
+| Migration | Description |
+|-----------|-------------|
+| `0001_init-users-watchlist` | Creates `users` + `watchlist_items` tables with FK, UNIQUE, CHECK constraints, and indexes |
+| `0002_watchlist-display-fields` | Adds `vote_average` and `release_date` to `watchlist_items` |
 
-**`watchlist_items`** - `id uuid PK`, `user_id uuid NOT NULL REFERENCES users(id) ON DELETE
-CASCADE`, `tmdb_id integer NOT NULL`, `kind text NOT NULL`, `title text NOT NULL`,
-`poster_path text`, `added_at timestamptz NOT NULL DEFAULT now()`, plus
-`vote_average double precision NOT NULL DEFAULT 0` and `release_date text NOT NULL
-DEFAULT ''` (added in `0002`). Constraints: `UNIQUE (user_id, tmdb_id, kind)` (idempotent
-add), `CHECK (kind IN ('movie','series'))`, and an index on `user_id`.
+### Applied Schema
 
-| Migration | What it does |
-| --- | --- |
-| `0001_init-users-watchlist` | Creates `users` + `watchlist_items` with FK, unique, kind CHECK, and the `user_id` index. |
-| `0002_watchlist-display-fields` | Adds `vote_average` and `release_date` so watchlist cards render consistently across devices. |
+#### `users` (auth)
 
-Design rules already followed: UUID primary keys via `gen_random_uuid()`, `snake_case`
-columns, `timestamptz` defaults to `now()`, explicit FK/CHECK/UNIQUE constraints.
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | uuid | PRIMARY KEY, `gen_random_uuid()` |
+| `email` | text | UNIQUE NOT NULL |
+| `password_hash` | text | NOT NULL |
+| `created_at` | timestamptz | NOT NULL DEFAULT `now()` |
 
-## Next step: make Postgres do the searching (`pg_trgm`)
+#### `watchlist_items`
 
-Search currently round-trips to TMDB on every query (`search` -> `tmdb` module). The
-planned improvement - deliberately **not built during the hardening work** - is to
-cache titles locally and let Postgres serve fuzzy search:
+| Column | Type | Constraints |
+|--------|------|-------------|
+| `id` | uuid | PRIMARY KEY, `gen_random_uuid()` |
+| `user_id` | uuid | NOT NULL, REFERENCES `users(id)` ON DELETE CASCADE |
+| `tmdb_id` | integer | NOT NULL |
+| `kind` | text | NOT NULL, CHECK (`kind IN ('movie','series')`) |
+| `title` | text | NOT NULL |
+| `poster_path` | text | |
+| `added_at` | timestamptz | NOT NULL DEFAULT `now()` |
+| `vote_average` | double precision | NOT NULL DEFAULT 0 |
+| `release_date` | text | NOT NULL DEFAULT '' |
 
-1. Sync a slice of the catalogue into a local table (e.g. `titles(id, tmdb_id, kind,
-   title, overview, ...)`) via a `pg_cron` job or on-demand upsert.
-2. `CREATE EXTENSION IF NOT EXISTS pg_trgm;` and add a GIN trigram index
-   (`CREATE INDEX ... USING gin (title gin_trgm_ops);`).
-3. Serve typo-tolerant search from SQL (`similarity()` / `%` operator) and fall back to
-   the TMDB round-trip only for cache misses.
+**Constraints:** `UNIQUE (user_id, tmdb_id, kind)` (idempotent add), index on `user_id`.
 
-This keeps the architecture PostgreSQL-first and turns the external API into a
-synchronizing backend rather than a per-request dependency. It is tracked as future
-work, not part of the current endpoints.
+## Design Rules
+
+- UUID primary keys via `gen_random_uuid()`
+- `snake_case` column naming
+- `timestamptz` defaults to `now()`
+- Explicit FK / CHECK / UNIQUE constraints
+- `NOT NULL` by default; explicit `NULL` when nullable
+- Row Level Security (RLS) on every table
+- Parameterized queries only — never string interpolation in SQL
+
+## PostgreSQL Extensions
+
+Supported extensions include `pgvector`, `postgis`, `pg_trgm`, `pg_cron`, `pgmq`, `uuid-ossp`, `pgcrypto`, `citext`, `hstore`, `btree_gin`, `btree_gist`, `tablefunc`, `ltree`, `intarray`, `pg_stat_statements`. Each extension lives in `extensions/<name>/` with `README.md`, `install.sql`, `configuration.sql`, `uninstall.sql`.
+
+See [`docs/database/extensions.md`](extensions.md) for details.
+
+## Directory Structure
+
+```
+database/
+├── README.md
+├── docs/                    # architecture, conventions, naming, security, testing
+├── bootstrap/               # 000_bootstrap.sql, 001_extensions.sql, 002_roles.sql, 003_schemas.sql
+├── migrations/              # Versioned forward migrations
+├── rollback/                # Paired rollback migrations
+├── seeds/                   # Idempotent reference data
+├── fixtures/                # Test fixtures
+├── tests/                   # SQL test suites
+├── scripts/                 # apply, rollback, seed, test, backup
+├── extensions/              # Per-extension setup
+└── src/
+    ├── platform/            # Cross-cutting infrastructure
+    ├── shared/              # Shared types, helpers, common functions
+    └── domains/             # Business capabilities (DDD)
+```
+
+## Related Documents
+
+- [`docs/database/schema.md`](schema.md) — Schema reference
+- [`docs/database/migrations.md`](migrations.md) — Migration workflow
+- [`docs/database/extensions.md`](extensions.md) — PostgreSQL extensions
+- [`database/README.md`](../../database/README.md) — Full database platform documentation
