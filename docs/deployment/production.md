@@ -60,7 +60,7 @@ curl https://api.example.com/
 ## Scaling
 
 | Type | Approach |
-|------|----------|
+| ------| ----------|
 | Horizontal | Scale frontend, backend, worker services |
 | Vertical | Adjust resource limits in compose files |
 | Database | Use managed PostgreSQL service for production |

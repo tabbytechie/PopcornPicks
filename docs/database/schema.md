@@ -16,7 +16,7 @@ CREATE TABLE users (
 ```
 
 | Column | Type | Description |
-|--------|------|-------------|
+| --------| ------| -------------|
 | `id` | uuid | Primary key, auto-generated UUID |
 | `email` | text | User email (unique, normalized to lowercase) |
 | `password_hash` | text | `scrypt` hashed password |
@@ -42,7 +42,7 @@ CREATE INDEX idx_watchlist_items_user_id ON watchlist_items(user_id);
 ```
 
 | Column | Type | Description |
-|--------|------|-------------|
+| --------| ------| -------------|
 | `id` | uuid | Primary key |
 | `user_id` | uuid | Owner of the watchlist item (FK to users) |
 | `tmdb_id` | integer | TMDB identifier for the title |
@@ -68,7 +68,7 @@ CREATE INDEX idx_watchlist_items_user_id ON watchlist_items(user_id);
 The following domains are planned under `database/src/domains/`:
 
 | Domain | Tables |
-|--------|--------|
+| --------| --------|
 | `movies` | Local movie cache, movie metadata |
 | `reviews` | User movie reviews |
 | `ratings` | User movie ratings |

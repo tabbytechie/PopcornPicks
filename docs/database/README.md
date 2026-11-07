@@ -5,7 +5,7 @@ PopcornPicks treats **PostgreSQL as an application platform**, not merely a data
 ## Philosophy
 
 | Principle | Description |
-|-----------|-------------|
+| -----------| -------------|
 | **PostgreSQL First** | Whenever PostgreSQL (or an official extension) can solve a problem, we use it. No Redis, MongoDB, Elasticsearch, Kafka, etc. |
 | **Domain-Driven Design** | Database organized by business capability (bounded contexts), not by object type |
 | **Modular Monolith** | One database, many bounded contexts. Each domain can be extracted later without rewriting the schema |
@@ -46,7 +46,7 @@ npm run db:seed      -w @popcornpicks/backend   # Seed reference data
 ### Migration History
 
 | Migration | Description |
-|-----------|-------------|
+| -----------| -------------|
 | `0001_init-users-watchlist` | Creates `users` + `watchlist_items` tables with FK, UNIQUE, CHECK constraints, and indexes |
 | `0002_watchlist-display-fields` | Adds `vote_average` and `release_date` to `watchlist_items` |
 
@@ -55,7 +55,7 @@ npm run db:seed      -w @popcornpicks/backend   # Seed reference data
 #### `users` (auth)
 
 | Column | Type | Constraints |
-|--------|------|-------------|
+| --------| ------| -------------|
 | `id` | uuid | PRIMARY KEY, `gen_random_uuid()` |
 | `email` | text | UNIQUE NOT NULL |
 | `password_hash` | text | NOT NULL |
@@ -64,7 +64,7 @@ npm run db:seed      -w @popcornpicks/backend   # Seed reference data
 #### `watchlist_items`
 
 | Column | Type | Constraints |
-|--------|------|-------------|
+| --------| ------| -------------|
 | `id` | uuid | PRIMARY KEY, `gen_random_uuid()` |
 | `user_id` | uuid | NOT NULL, REFERENCES `users(id)` ON DELETE CASCADE |
 | `tmdb_id` | integer | NOT NULL |

@@ -8,7 +8,7 @@
 ### Detailed Rules
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------| -----------| ---------|
 | Component files | `PascalCase.tsx` | `MovieCard.tsx` |
 | Hook files | `kebab-case.ts` | `use-trending-movies.ts` |
 | Service files | `kebab-case.ts` | `home.service.ts` |
@@ -22,7 +22,7 @@
 ### SQL Naming
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------| -----------| ---------|
 | Tables | `snake_case` plural | `watchlist_items` |
 | Columns | `snake_case` | `poster_path` |
 | Indexes | `idx_<table>_<column>` | `idx_watchlist_items_user_id` |

@@ -5,7 +5,7 @@ PopcornPicks exposes a normalized REST API under `/api/*`. The `tmdb` module is 
 ## Design Principles
 
 | Principle | Description |
-|-----------|-------------|
+| -----------| -------------|
 | **Backend hides external APIs** (ADR-0003) | TMDB key stays server-side; frontend calls only our `/api/*` |
 | **Normalized responses** | All TMDB snake_case mapped to camelCase DTOs |
 | **Consistent error shape** | `{ error: "message" }` with proper HTTP status codes |
@@ -23,14 +23,14 @@ PopcornPicks exposes a normalized REST API under `/api/*`. The `tmdb` module is 
 ### System
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| --------| ------| -------------| ------|
 | `GET` | `/health` | Service health + DB connectivity | No |
 | `GET` | `/` | API index (name, health link, route list) | No |
 
 ### Authentication (`/api/auth`)
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| --------| ------| -------------| ------|
 | `POST` | `/api/auth/register` | Register a new user | No |
 | `POST` | `/api/auth/login` | Login & receive JWT | No |
 | `GET` | `/api/auth/me` | Get current user profile | Yes |
@@ -38,8 +38,8 @@ PopcornPicks exposes a normalized REST API under `/api/*`. The `tmdb` module is 
 ### Movies (`/api/movies`)
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
-| `GET` | `/api/movies/trending` | Trending movies (window: day\|week) | No |
+| --------| ------| -------------| ------|
+| `GET` | `/api/movies/trending` | Trending movies (window: day\| week) | No |
 | `GET` | `/api/movies/popular` | Popular movies | No |
 | `GET` | `/api/movies/top_rated` | Top-rated movies | No |
 | `GET` | `/api/movies/upcoming` | Upcoming movies | No |
@@ -55,7 +55,7 @@ PopcornPicks exposes a normalized REST API under `/api/*`. The `tmdb` module is 
 ### TV Shows (`/api/shows`)
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| --------| ------| -------------| ------|
 | `GET` | `/api/shows/trending` | Trending TV series | No |
 | `GET` | `/api/shows/popular` | Popular TV series | No |
 | `GET` | `/api/shows/top_rated` | Top-rated TV series | No |
@@ -67,13 +67,13 @@ PopcornPicks exposes a normalized REST API under `/api/*`. The `tmdb` module is 
 ### Search (`/api/search`)
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| --------| ------| -------------| ------|
 | `GET` | `/api/search?query=...` | Combined movie + series search | No |
 
 ### Watchlists (`/api/watchlists`)
 
 | Method | Path | Description | Auth |
-|--------|------|-------------|------|
+| --------| ------| -------------| ------|
 | `GET` | `/api/watchlists` | List user's watchlist items | Yes |
 | `POST` | `/api/watchlists` | Add item to watchlist | Yes |
 | `DELETE` | `/api/watchlists/:id` | Remove from watchlist | Yes |

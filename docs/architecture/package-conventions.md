@@ -17,7 +17,7 @@ packages/<name>/
 ## Existing Packages
 
 | Package | Purpose | Dependencies |
-|---------|---------|--------------|
+| ---------| ---------| --------------|
 | `types` | Shared TypeScript DTOs (Movie, Show, Genre, ...) | (none) |
 | `api-client` | Typed fetch wrapper for frontend | `@popcornpicks/types` |
 | `shared` | Shared utilities, constants, helpers | `@popcornpicks/types` |

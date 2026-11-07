@@ -5,7 +5,7 @@ PopcornPicks follows a GitHub Flow-inspired branching model.
 ## Branches
 
 | Branch | Purpose | Protection |
-|--------|---------|------------|
+| --------| ---------| ------------|
 | `main` | Production-ready code | Protected — requires PR review |
 | `develop` | Integration branch | Protected — requires PR review |
 | `feature/*` | New features | Created from `develop` |
@@ -65,7 +65,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 ### Types
 
 | Type | Use |
-|------|-----|
+| ------| -----|
 | `feat` | New feature |
 | `fix` | Bug fix |
 | `docs` | Documentation only |

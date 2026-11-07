@@ -5,7 +5,7 @@ PopcornPicks includes an enterprise-grade Docker platform under `docker/` with c
 ## Services
 
 | Service | Purpose | Ports |
-|---------|---------|-------|
+| ---------| ---------| -------|
 | Frontend | React SPA (Vite dev) | 5173 (dev), 80 (prod) |
 | Backend | Express API + TMDB proxy | 3001 |
 | Admin | Admin console | 5174 (dev), 80 (prod) |
@@ -63,7 +63,7 @@ docker/scripts/start.sh dev
 ## Scripts
 
 | Script | Description |
-|--------|-------------|
+| --------| -------------|
 | `docker/scripts/start.sh` | Start services (dev/test/prod) |
 | `docker/scripts/stop.sh` | Stop services |
 | `docker/scripts/restart.sh` | Restart services |
@@ -81,7 +81,7 @@ docker/scripts/start.sh dev
 ## Troubleshooting
 
 | Issue | Solution |
-|-------|----------|
+| -------| ----------|
 | Container won't start | `docker/scripts/logs.sh [service]` |
 | Database connection issues | `docker/scripts/health.sh` |
 | Build failures | `docker compose build --no-cache` |

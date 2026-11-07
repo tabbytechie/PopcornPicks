@@ -92,8 +92,8 @@ Get trending movies.
 
 **Query Parameters:**
 | Param | Type | Default | Description |
-|-------|------|---------|-------------|
-| `window` | `day`\|`week` | `week` | Trending time window |
+| -------| ------| ---------| -------------|
+| `window` | `day`\| `week` | `week` | Trending time window |
 
 **Response (200):**
 ```json
@@ -129,7 +129,7 @@ Search movies by query.
 
 **Query Parameters:**
 | Param | Type | Description |
-|-------|------|-------------|
+| -------| ------| -------------|
 | `query` | string | Search query string |
 | `page` | number | Page number (default: 1) |
 
@@ -183,7 +183,7 @@ Get the list of movie genres.
 
 Get trending TV series.
 
-**Query Parameters:** `window` (`day`\|`week`, default: `week`)
+**Query Parameters:** `window` (`day`\| `week`, default: `week`)
 
 ### GET /api/shows/popular
 
@@ -223,7 +223,7 @@ Combined movie + series search.
 
 **Query Parameters:**
 | Param | Type | Description |
-|-------|------|-------------|
+| -------| ------| -------------|
 | `query` | string | Search query string |
 | `page` | number | Page number (default: 1) |
 
@@ -286,7 +286,7 @@ All errors follow a consistent shape:
 ```
 
 | Status | Meaning |
-|--------|---------|
+| --------| ---------|
 | 400 | Validation error — invalid request body or parameters |
 | 401 | Unauthorized — missing or invalid authentication |
 | 404 | Not found — resource does not exist |

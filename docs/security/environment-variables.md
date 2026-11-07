@@ -10,7 +10,7 @@
 ## Backend Environment Variables (`apps/backend/.env`)
 
 | Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
+| ----------| ----------| ---------| -------------|
 | `TMDB_API_KEY` | **Yes** | — | TMDB API key (from themoviedb.org) |
 | `PORT` | No | `4000` | Backend listen port |
 | `TMDB_BASE_URL` | No | `https://api.themoviedb.org/3` | TMDB API base URL |
@@ -42,7 +42,7 @@ docker/scripts/start.sh dev
 ## Security Best Practices
 
 | Practice | Implementation |
-|----------|---------------|
+| ----------| ---------------|
 | No secrets in code | All secrets via environment variables |
 | `.env` in `.gitignore` | Prevents accidental commits |
 | `.env.example` committed | Template for other developers |

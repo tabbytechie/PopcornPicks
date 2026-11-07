@@ -5,7 +5,7 @@ PopcornPicks can be deployed using Docker Compose (development and production) o
 ## Deployment Options
 
 | Option | Best For | Command |
-|--------|----------|---------|
+| --------| ----------| ---------|
 | **Docker Compose (root)** | Quick local dev with Postgres + Backend + Frontend | `docker compose up -d --build` |
 | **Full Docker Platform** | Complete platform with admin, pgAdmin, monitoring | `docker/scripts/start.sh dev` |
 | **Without Docker** | Manual local development | `npm install` + `npm run dev:backend` + `npm run dev` |

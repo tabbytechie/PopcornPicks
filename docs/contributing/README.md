@@ -31,7 +31,7 @@ See [`docs/contributing/git-workflow.md`](git-workflow.md) for the full branchin
 ### Branch Naming
 
 | Prefix | Use |
-|--------|-----|
+| --------| -----|
 | `feature/` | New features |
 | `fix/` | Bug fixes |
 | `docs/` | Documentation changes |

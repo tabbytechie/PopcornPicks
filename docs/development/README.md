@@ -5,7 +5,7 @@ Local development setup and daily workflow for PopcornPicks.
 ## Prerequisites
 
 | Requirement | Version | Notes |
-|-------------|---------|-------|
+| -------------| ---------| -------|
 | Node.js | ≥ 18 | Install via [nvm](https://github.com/nvm-sh/nvm) |
 | npm | Bundled | Comes with Node.js |
 | Docker | Latest | Optional but recommended |
@@ -63,7 +63,7 @@ npm run db:seed -w @popcornpicks/backend
 ## Available Scripts (Root)
 
 | Script | Description |
-|--------|-------------|
+| --------| -------------|
 | `npm run dev` | Start frontend dev server |
 | `npm run dev:backend` | Start backend dev server |
 | `npm run dev:all` | Start both backend and frontend |
@@ -78,7 +78,7 @@ npm run db:seed -w @popcornpicks/backend
 ### Backend (`apps/backend/.env`)
 
 | Variable | Required | Default |
-|----------|----------|---------|
+| ----------| ----------| ---------|
 | `TMDB_API_KEY` | Yes | — |
 | `PORT` | No | `4000` |
 | `DATABASE_URL` | For DB features | — |

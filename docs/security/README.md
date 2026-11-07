@@ -3,7 +3,7 @@
 ## Supported Versions
 
 | Version | Supported |
-|---------|-----------|
+| ---------| -----------|
 | Current (main) | ✅ Yes |
 | Older releases | ❌ No |
 
@@ -19,7 +19,7 @@ To report a security vulnerability, please:
 ## Security Practices
 
 | Practice | Implementation |
-|----------|---------------|
+| ----------| ---------------|
 | **Secret management** | `.env` files gitignored; secrets injected at runtime |
 | **API key protection** | TMDB key never reaches browser (backend proxy, ADR-0003) |
 | **Password hashing** | `scrypt` (self-describing `scrypt$<salt>$<hash>` format) |

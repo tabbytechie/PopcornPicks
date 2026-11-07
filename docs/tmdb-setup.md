@@ -13,9 +13,9 @@ To use the movie functionality in PopcornPicks, you need to set up a TMDB (The M
 5. Click "Create" to request an API key
 6. Choose "Developer" option
 7. Fill out the required information:
-   - Application Name: PopcornPicks (or any name you prefer)
-   - Application URL: http://localhost:8081 (for development)
-   - Application Summary: Personal movie discovery app
+- Application Name: PopcornPicks (or any name you prefer)
+- Application URL: http://localhost:8081 (for development)
+- Application Summary: Personal movie discovery app
 8. Accept the terms and conditions
 9. Copy your API key (v3 auth)
 
@@ -23,9 +23,9 @@ To use the movie functionality in PopcornPicks, you need to set up a TMDB (The M
 
 1. Open the `.env.local` file in the root directory of your project
 2. Replace `your_tmdb_api_key_here` with your actual API key:
-   ```
-   VITE_TMDB_API_KEY=your_actual_api_key_here
-   ```
+ ```
+ VITE_TMDB_API_KEY=your_actual_api_key_here
+ ```
 3. Save the file
 
 ### Step 3: Restart the Development Server
@@ -41,12 +41,12 @@ npm run dev
 ✅ **TMDB API Integration**: Complete integration with The Movie Database API
 ✅ **Movie Listing**: Trending movies displayed on homepage with real data
 ✅ **Movie Details**: Click on any movie to see detailed information including:
-   - High-quality posters and backdrops
-   - Movie overview, ratings, and release dates
-   - Cast information with photos
-   - Genre tags
-   - Runtime, budget, and revenue information
-   - Movie trailers (when available)
+- High-quality posters and backdrops
+- Movie overview, ratings, and release dates
+- Cast information with photos
+- Genre tags
+- Runtime, budget, and revenue information
+- Movie trailers (when available)
 
 ✅ **Error Handling**: Proper error messages and loading states
 ✅ **Image Fallbacks**: Placeholder images for missing posters

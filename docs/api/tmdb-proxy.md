@@ -5,7 +5,7 @@ PopcornPicks integrates with [The Movie Database (TMDB)](https://www.themoviedb.
 ## Why a Backend Proxy?
 
 | Problem | Solution |
-|---------|----------|
+| ---------| ----------|
 | API key exposure | TMDB key stays server-side, never reaches the browser |
 | Vendor lock-in | All TMDB calls centralized in one module (`tmdb/`) |
 | Contract changes | TMDB API changes only require backend updates, no frontend changes |
@@ -51,7 +51,7 @@ Located at `apps/backend/src/modules/tmdb/`. This is the **only** module that kn
 All TMDB responses are mapped to types from `@popcornpicks/types`:
 
 | Type | Fields |
-|------|--------|
+| ------| --------|
 | `Movie` | id, title, overview, posterUrl, backdropUrl, releaseDate, voteAverage, voteCount, popularity, language, genreIds, genres, hasTrailer, kind, runtimeMinutes, status |
 | `Show` | id, title (name), overview, posterUrl, backdropUrl, releaseDate (first_air_date), voteAverage, voteCount, popularity, language, genreIds, genres, hasTrailer, kind |
 | `TitlePage<T>` | page, totalPages, totalResults, results: T[] |
@@ -98,7 +98,7 @@ All TMDB responses are mapped to types from `@popcornpicks/types`:
 ## Rate Limits
 
 | Limit | Value |
-|-------|-------|
+| -------| -------|
 | Requests per 10 seconds | 40 |
 | Requests per day | 1,000 |
 

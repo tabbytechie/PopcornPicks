@@ -5,7 +5,7 @@ PopcornPicks leverages PostgreSQL extensions to provide advanced functionality w
 ## Supported Extensions
 
 | Extension | Purpose | Status |
-|-----------|---------|--------|
+| -----------| ---------| --------|
 | `pgvector` | Vector search, embeddings, nearest-neighbour similarity | Planned |
 | `postgis` | Geospatial queries, radius, bounding boxes, nearest neighbours | Planned |
 | `pg_trgm` | Fuzzy text search, trigram indexes for typo-tolerant search | Planned |
@@ -37,7 +37,7 @@ extensions/<name>/
 ## Why No External Services?
 
 | Instead of | We use PostgreSQL |
-|------------|------------------|
+| ------------| ------------------|
 | Redis | `pg_cron` + tables for scheduling/caching |
 | MongoDB | JSONB columns in PostgreSQL |
 | Elasticsearch | `pg_trgm` trigram search |

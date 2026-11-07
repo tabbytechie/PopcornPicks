@@ -5,7 +5,7 @@ All TypeScript projects in PopcornPicks use **strict mode** (`strict: true` in `
 ## What Strict Mode Enables
 
 | Flag | Description |
-|------|-------------|
+| ------| -------------|
 | `noImplicitAny` | Variables and parameters must have explicit types |
 | `strictNullChecks` | `null` and `undefined` are not assignable to other types |
 | `strictFunctionTypes` | Contravariant function parameters |

@@ -53,7 +53,7 @@ npm install <package> -D -w @popcornpicks/frontend
 ## Dependency Rules
 
 | Rule | Description |
-|------|-------------|
+| ------| -------------|
 | No circular dependencies | Workspaces must not depend on each other circularly |
 | Packages don't depend on apps | `packages/*` never depends on `apps/*` |
 | Shared code in packages | Code used by multiple apps goes in `packages/` |

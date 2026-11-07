@@ -74,7 +74,7 @@ Use the typed `config` object from `config/`. Never read `process.env` directly 
 ### Path Aliases
 
 | Alias | Resolves To |
-|-------|-------------|
+| -------| -------------|
 | `@/` | `src/` |
 | `@/core` | `src/core/` |
 | `@/shared` | `src/shared/` |

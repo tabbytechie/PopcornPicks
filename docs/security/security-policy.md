@@ -125,7 +125,7 @@ Add pre-commit hook to check for secrets:
 . "$(dirname "$0")/_/husky.sh"
 
 # Check for potential secrets in staged files
-if git diff --cached --name-only | xargs grep -l "API_KEY\|SECRET\|PASSWORD\|TOKEN"; then
+if git diff --cached --name-only | xargs grep -l "API_KEY\| SECRET\| PASSWORD\| TOKEN"; then
   echo "⚠️  WARNING: Potential secrets detected in staged files!"
   echo "Please review before committing."
   exit 1

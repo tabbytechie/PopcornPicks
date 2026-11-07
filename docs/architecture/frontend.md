@@ -5,7 +5,7 @@ PopcornPicks frontend is a **feature-based React + TypeScript SPA** in `apps/fro
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+| -------| -----------|
 | Framework | React 18 + TypeScript |
 | Build tool | Vite 5 |
 | Routing | React Router DOM 6 |

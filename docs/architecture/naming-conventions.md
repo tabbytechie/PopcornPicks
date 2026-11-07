@@ -5,7 +5,7 @@
 ### Files & Folders
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------| -----------| ---------|
 | Component files | `PascalCase.tsx` | `MovieCard.tsx`, `HeroCarousel.tsx` |
 | Hook files | `kebab-case.ts` | `use-trending-movies.ts` |
 | Service files | `kebab-case.ts` | `home.service.ts`, `tmdb.service.ts` |
@@ -17,7 +17,7 @@
 ### Variables & Functions
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------| -----------| ---------|
 | Variables | `camelCase` | `trendingMovies`, `tmdbApiKey`, `isLoading` |
 | Functions | `camelCase` | `fetchTrendingMovies()`, `getGenreName()` |
 | React components | `PascalCase` | `MovieCard`, `HomePage` |
@@ -31,7 +31,7 @@ Treat acronyms as words: `getTmdbMovie` (not `getTMDBMovie`).
 ## SQL
 
 | Item | Convention | Example |
-|------|-----------|---------|
+| ------| -----------| ---------|
 | Tables | `snake_case` plural | `watchlist_items`, `movie_genres` |
 | Columns | `snake_case` | `poster_path`, `vote_average`, `release_date` |
 | Primary keys | `id` (UUID) | `id uuid PRIMARY KEY DEFAULT gen_random_uuid()` |
